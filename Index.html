@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2C2328">
+    <meta name="description" content="Spirit & Soul - Daily Devotional Mood Tracker. Connect your heart with Heaven through personalized devotionals and reflective journaling.">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <title>Spirit & Soul - Daily Devotional</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Install Banner -->
+        <div id="install-banner" class="install-banner">
+            <div class="install-text">Install Spirit & Soul for easy access</div>
+            <button class="install-btn" id="install-btn">Install</button>
+            <button class="install-close" id="install-close">×</button>
+        </div>
+
+        <!-- Sync Status -->
+        <div id="sync-status" class="sync-status">
+            <span class="loading"></span> Saving...
+        </div>
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-title">SPIRIT&SOUL</div>
+            <div class="app-subtitle">Where Mind Meets Soul</div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="hero-section">
+                    <h1 class="hero-title">Welcome</h1>
+                    <p class="hero-description">Connect your heart with Heaven through personalized devotionals and reflective journaling.</p>
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">✨</div>
+                        <div class="feature-content">
+                            <h3>Daily Devotionals</h3>
+                            <p>Receive a word from God tailored to exactly how you're feeling today.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">📖</div>
+                        <div class="feature-content">
+                            <h3>Journal Your Heart</h3>
+                            <p>Capture your thoughts, prayers, and revelations that save automatically.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🕊️</div>
+                        <div class="feature-content">
+                            <h3>Track Your Journey</h3>
+                            <p>Watch how God has been speaking to you and guiding your path over time.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">💚</div>
+                        <div class="feature-content">
+                            <h3>Find Peace</h3>
+                            <p>Let Scripture minister to your emotions and bring you closer to God.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="navigateTo('tracker')">Begin Your Journey</button>
+            </div>
+
+            <!-- Mood Tracker Page -->
+            <div id="tracker-page" class="page">
+                <h1 class="page-title">What do you feel God is saying to you today?</h1>
+                
+                <div class="card">
+                    <div class="card-title">
+                        ✨ Today's Devotional
+                    </div>
+                    <div class="card-content" id="devotional-display">
+                        <p style="text-align: center; color: #9CB4B4; padding: 1.5rem 0;">
+                            Select your mood and receive a word of inspiration
+                        </p>
+                    </div>
+                </div>
+
+                <p class="subtitle-text">Take a moment to breathe, reflect, and listen. God still speaks through the quiet places of your heart.</p>
+
+                <div class="form-group">
+                    <label class="form-label" for="mood-select">How are you feeling?</label>
+                    <select id="mood-select" class="form-select">
+                        <option value="">Select your mood...</option>
+                        <option value="happy">Joyful/Grateful</option>
+                        <option value="sad">Heavy/Discouraged</option>
+                        <option value="anxious">Worried/Fearful</option>
+                        <option value="hopeful">Hopeful/Expectant</option>
+                        <option value="confused">Confused/Seeking Direction</option>
+                        <option value="calm">Calm/Resting in God</option>
+                        <option value="overwhelmed">Overwhelmed/Burdened</option>
+                        <option value="lonely">Lonely/Isolated</option>
+                        <option value="angry">Angry/Frustrated</option>
+                        <option value="grateful">Deeply Grateful</option>
+                        <option value="doubtful">Doubtful/Questioning</option>
+                        <option value="peaceful">Peaceful/Content</option>
+                        <option value="broken">Broken/Hurting</option>
+                        <option value="inspired">Inspired/Motivated</option>
+                        <option value="waiting">Waiting/Patient</option>
+                    </select>
+                    <div id="mood-display" class="mood-display hidden"></div>
+                    <div id="update-notification" class="notification hidden"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="mood-submit">Update Mood</button>
+                    <button class="btn btn-primary" id="devotional-button">Get Inspiration</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        📖 Journal Your Thoughts
+                    </div>
+                    <p class="subtitle-text" style="margin-top: 0;">Reflect on what God is speaking to your heart. Write freely...</p>
+                    <textarea 
+                        class="journal-textarea" 
+                        id="journal-entry" 
+                        placeholder="What's on your heart today? How did this devotional speak to you?"></textarea>
+                    <button class="btn btn-primary" id="save-journal" style="margin-top: 1rem;">
+                        Save Journal Entry
+                    </button>
+                    <div id="save-status" class="save-status"></div>
+                    
+                    <div id="journal-entries-container">
+                        <div class="entries-header hidden" id="entries-header">
+                            <span>Previous Entries</span>
+                            <button class="export-btn" id="export-btn" onclick="exportJournal()">Export</button>
+                        </div>
+                        <div id="journal-entries-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Page -->
+            <div id="about-page" class="page">
+                <h1 class="page-title">About Spirit & Soul</h1>
+                
+                <div class="about-section">
+                    <h2>Our Mission</h2>
+                    <p>Spirit & Soul is a sacred digital space where mind meets soul, and emotions find peace in God's presence. We believe that spiritual wellness and emotional health are deeply interconnected.</p>
+                </div>
+
+                <div class="about-section">
+                    <h2>What We Offer</h2>
+                    <p>Our daily devotional mood tracker helps you:</p>
+                    <ul>
+                        <li>Connect with God through personalized devotionals</li>
+                        <li>Track your emotional and spiritual journey</li>
+                        <li>Find peace through Scripture</li>
+                        <li>Grow spiritually through daily reflection</li>
+                    </ul>
+                </div>
+
+                <div class="about-section">
+                    <h2>How It Works</h2>
+                    <ol>
+                        <li>Select how you're feeling</li>
+                        <li>Receive a personalized prophetic word</li>
+                        <li>Journal your thoughts and reflections</li>
+                        <li>Review your spiritual journey over time</li>
+                    </ol>
+                </div>
+
+                <div class="about-section">
+                    <h2>Our Heart</h2>
+                    <p>We believe that God cares about every emotion you experience. Whether you're joyful, overwhelmed, peaceful, or broken—He meets you right where you are.</p>
+                </div>
+
+                <div class="about-section">
+                    <h2>Data & Privacy</h2>
+                    <p>Your journal entries are saved locally on your device. Your conversations with God are sacred and private. We never share or sell your data.</p>
+                </div>
+            </div>
+
+            <!-- Contact Page -->
+            <div id="contact-page" class="page">
+                <h1 class="page-title">Get In Touch</h1>
+                
+                <p class="subtitle-text">We'd love to hear from you. Share your feedback, questions, or testimony with us.</p>
+
+                <div class="card">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label class="form-label" for="name">Your Name</label>
+                            <input type="text" id="name" class="contact-input" required placeholder="Enter your name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address</label>
+                            <input type="email" id="email" class="contact-input" required placeholder="your.email@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="subject">Subject</label>
+                            <select id="subject" class="form-select" required>
+                                <option value="">Select a subject...</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="question">Question</option>
+                                <option value="testimony">Share a Testimony</option>
+                                <option value="suggestion">Suggestion</option>
+                                <option value="support">Technical Support</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="message">Your Message</label>
+                            <textarea id="message" class="journal-textarea" rows="6" required placeholder="Share your thoughts with us..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+
+                        <div id="form-status" class="save-status"></div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Other Ways to Connect</div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h3 style="color: #B8D4D4; font-size: 1rem; margin-bottom: 0.5rem;">📧 Email</h3>
+                        <p style="color: #C4B5A9; font-size: 0.9rem;">hello@spiritandsoul.com</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h3 style="color: #B8D4D4; font-size: 1rem; margin-bottom: 0.5rem;">🙏 Prayer Requests</h3>
+                        <p style="color: #C4B5A9; font-size: 0.9rem;">We'd be honored to pray with you. Include it in your message above.</p>
+                    </div>
+                    
+                    <div>
+                        <h3 style="color: #B8D4D4; font-size: 1rem; margin-bottom: 0.5rem;">💬 Testimonies</h3>
+                        <p style="color: #C4B5A9; font-size: 0.9rem;">Has God spoken to you through Spirit & Soul? We'd love to hear your story!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-page="home" onclick="navigateTo('home'); return false;">
+                <div class="nav-icon">🏠</div>
+                <div>Home</div>
+            </a>
+            <a href="#" class="nav-item" data-page="tracker" onclick="navigateTo('tracker'); return false;">
+                <div class="nav-icon">✨</div>
+                <div>Tracker</div>
+            </a>
+            <a href="#" class="nav-item" data-page="about" onclick="navigateTo('about'); return false;">
+                <div class="nav-icon">ℹ️</div>
+                <div>About</div>
+            </a>
+            <a href="#" class="nav-item" data-page="contact" onclick="navigateTo('contact'); return false;">
+                <div class="nav-icon">✉️</div>
+                <div>Contact</div>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main App Script -->
+    <script src="app.js"></script>
+</body>
+</html>

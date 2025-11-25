@@ -1,0 +1,523 @@
+// Spirit & Soul - Main App JavaScript
+// With localStorage persistence and Firebase-ready structure
+
+// ==========================================
+// MOOD DATA
+// ==========================================
+const moodMessages = {
+    happy: {
+        message: "🎉 Savor every second of this happiness, allowing it to spread. You are on a path of positivity and growth—keep moving forward!",
+        verse: "📖 <strong>Nehemiah 8:10</strong> — <em>Do not grieve, for the joy of the Lord is your strength.</em>"
+    },
+    sad: {
+        message: "🕊️ Even in sorrow, God draws near. His comfort is wrapping around you even now.",
+        verse: "📖 <strong>Psalm 34:18</strong> — <em>The Lord is close to the brokenhearted and saves those who are crushed in spirit.</em>"
+    },
+    anxious: {
+        message: "💚 Take a deep breath—God has not forgotten you. Release your worries into His hands today.",
+        verse: "📖 <strong>Philippians 4:6-7</strong> — <em>Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.</em>"
+    },
+    hopeful: {
+        message: "✨ Hope is a divine spark from Heaven. God is preparing something beautiful in the unseen—keep your faith alive!",
+        verse: "📖 <strong>Romans 15:13</strong> — <em>May the God of hope fill you with all joy and peace as you trust in Him.</em>"
+    },
+    confused: {
+        message: "🕊️ When you lack direction, quiet your heart—God's whisper will come through peace, not pressure.",
+        verse: "📖 <strong>Proverbs 3:5-6</strong> — <em>Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to Him, and He will make your paths straight.</em>"
+    },
+    calm: {
+        message: "🌿 Rest, beloved. The Lord delights when you find peace in His presence.",
+        verse: "📖 <strong>Isaiah 26:3</strong> — <em>You will keep in perfect peace those whose minds are steadfast, because they trust in You.</em>"
+    },
+    overwhelmed: {
+        message: "🌊 You don't have to carry this alone. God sees every burden and He's inviting you to cast them upon Him.",
+        verse: "📖 <strong>Matthew 11:28</strong> — <em>Come to me, all you who are weary and burdened, and I will give you rest.</em>"
+    },
+    lonely: {
+        message: "💫 You are never alone. Even in the silence, God is with you—closer than your next breath.",
+        verse: "📖 <strong>Deuteronomy 31:6</strong> — <em>He will never leave you nor forsake you.</em>"
+    },
+    angry: {
+        message: "🔥 Your feelings are valid, but don't let anger take root. God can transform this into something redemptive.",
+        verse: "📖 <strong>Ephesians 4:26-27</strong> — <em>In your anger do not sin: Do not let the sun go down while you are still angry, and do not give the devil a foothold.</em>"
+    },
+    grateful: {
+        message: "🙏 Gratitude opens the door to more blessings. Your thankful heart pleases the Lord.",
+        verse: "📖 <strong>1 Thessalonians 5:18</strong> — <em>Give thanks in all circumstances; for this is God's will for you in Christ Jesus.</em>"
+    },
+    doubtful: {
+        message: "🌱 Doubt doesn't disqualify you. Even in your questions, God is working to strengthen your faith.",
+        verse: "📖 <strong>Mark 9:24</strong> — <em>Immediately the boy's father exclaimed, 'I do believe; help me overcome my unbelief!'</em>"
+    },
+    peaceful: {
+        message: "🕊️ This peace is a gift from Heaven. Treasure it, for it's a sign of God's presence with you.",
+        verse: "📖 <strong>John 14:27</strong> — <em>Peace I leave with you; my peace I give you. I do not give to you as the world gives.</em>"
+    },
+    broken: {
+        message: "💔 God specializes in mending broken hearts. He's collecting every tear and healing every wound.",
+        verse: "📖 <strong>Psalm 147:3</strong> — <em>He heals the brokenhearted and binds up their wounds.</em>"
+    },
+    inspired: {
+        message: "⚡ This inspiration is divine. Step forward with confidence—God is empowering you for this season!",
+        verse: "📖 <strong>Philippians 4:13</strong> — <em>I can do all things through Christ who strengthens me.</em>"
+    },
+    waiting: {
+        message: "⏳ Waiting is not wasted time. God is preparing you and perfecting His plan. Trust His timing.",
+        verse: "📖 <strong>Isaiah 40:31</strong> — <em>But those who hope in the Lord will renew their strength. They will soar on wings like eagles.</em>"
+    }
+};
+
+// ==========================================
+// STATE MANAGEMENT
+// ==========================================
+let currentMood = "";
+let journalEntries = [];
+
+// ==========================================
+// LOCAL STORAGE FUNCTIONS
+// ==========================================
+function saveToLocalStorage() {
+    try {
+        localStorage.setItem('spiritSoulJournal', JSON.stringify(journalEntries));
+        localStorage.setItem('spiritSoulMood', currentMood);
+        showSyncStatus('Saved');
+        return true;
+    } catch (e) {
+        console.error('Error saving to localStorage:', e);
+        return false;
+    }
+}
+
+function loadFromLocalStorage() {
+    try {
+        const savedJournal = localStorage.getItem('spiritSoulJournal');
+        const savedMood = localStorage.getItem('spiritSoulMood');
+        
+        if (savedJournal) {
+            journalEntries = JSON.parse(savedJournal);
+        }
+        
+        if (savedMood) {
+            currentMood = savedMood;
+        }
+        
+        return true;
+    } catch (e) {
+        console.error('Error loading from localStorage:', e);
+        return false;
+    }
+}
+
+function showSyncStatus(text) {
+    const syncStatus = document.getElementById('sync-status');
+    if (syncStatus) {
+        syncStatus.textContent = text;
+        syncStatus.classList.add('show');
+        setTimeout(() => {
+            syncStatus.classList.remove('show');
+        }, 2000);
+    }
+}
+
+// ==========================================
+// FIREBASE PLACEHOLDER (Ready for integration)
+// ==========================================
+// Uncomment and configure when ready to add Firebase
+
+/*
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInAnonymously } from 'firebase/auth';
+import { getFirestore, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+async function saveToFirebase(entry) {
+    try {
+        const docRef = await addDoc(collection(db, "journal_entries"), {
+            ...entry,
+            userId: auth.currentUser.uid,
+            timestamp: new Date()
+        });
+        showSyncStatus('Synced to cloud');
+        return docRef.id;
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        return null;
+    }
+}
+
+async function loadFromFirebase() {
+    try {
+        const q = query(collection(db, "journal_entries"), 
+                       where("userId", "==", auth.currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        const entries = [];
+        querySnapshot.forEach((doc) => {
+            entries.push({ id: doc.id, ...doc.data() });
+        });
+        return entries;
+    } catch (e) {
+        console.error("Error loading documents: ", e);
+        return [];
+    }
+}
+*/
+
+// ==========================================
+// DOM ELEMENTS
+// ==========================================
+const devotionalButton = document.getElementById('devotional-button');
+const devotionalDisplay = document.getElementById('devotional-display');
+const moodSelect = document.getElementById('mood-select');
+const moodSubmit = document.getElementById('mood-submit');
+const moodDisplay = document.getElementById('mood-display');
+const updateNotification = document.getElementById('update-notification');
+const journalTextarea = document.getElementById('journal-entry');
+const saveJournalBtn = document.getElementById('save-journal');
+const saveStatus = document.getElementById('save-status');
+const journalEntriesList = document.getElementById('journal-entries-list');
+const entriesHeader = document.getElementById('entries-header');
+
+// ==========================================
+// NAVIGATION
+// ==========================================
+function navigateTo(page) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Show selected page
+    document.getElementById(page + '-page').classList.add('active');
+    
+    // Update nav items
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    document.querySelector(`[data-page="${page}"]`).classList.add('active');
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+}
+
+// ==========================================
+// DEVOTIONAL FUNCTIONS
+// ==========================================
+function displayDailyDevotional() {
+    const selectedMood = moodSelect.value;
+    
+    if (!selectedMood || selectedMood === "") {
+        devotionalDisplay.innerHTML = `
+            <p class="error-message">
+                Please select a mood to receive a prophetic word.
+            </p>
+        `;
+        return;
+    }
+
+    const moodData = moodMessages[selectedMood];
+    
+    if (moodData) {
+        devotionalDisplay.innerHTML = `
+            <div class="message">${moodData.message}</div>
+            <div class="verse">${moodData.verse}</div>
+        `;
+    }
+}
+
+function updateMood() {
+    const selectedMood = moodSelect.value;
+    
+    if (!selectedMood || selectedMood === "") {
+        updateNotification.textContent = "Please select a mood first.";
+        updateNotification.style.background = "rgba(255, 100, 100, 0.2)";
+        updateNotification.style.color = "#FFB3B3";
+        updateNotification.classList.remove('hidden');
+        
+        setTimeout(() => {
+            updateNotification.classList.add('hidden');
+        }, 3000);
+        return;
+    }
+
+    currentMood = selectedMood;
+    const moodText = moodSelect.options[moodSelect.selectedIndex].text;
+    
+    moodDisplay.textContent = `Current mood: ${moodText}`;
+    moodDisplay.classList.remove('hidden');
+    
+    updateNotification.textContent = `✓ Mood updated to: ${moodText}`;
+    updateNotification.style.background = "rgba(122, 158, 159, 0.3)";
+    updateNotification.style.color = "#B8D4D4";
+    updateNotification.classList.remove('hidden');
+    
+    // Save to localStorage
+    saveToLocalStorage();
+    
+    setTimeout(() => {
+        updateNotification.classList.add('hidden');
+    }, 3000);
+}
+
+// ==========================================
+// JOURNAL FUNCTIONS
+// ==========================================
+function saveJournalEntry() {
+    const entryText = journalTextarea.value.trim();
+    
+    if (!entryText) {
+        saveStatus.textContent = "Please write something before saving.";
+        saveStatus.style.color = "#FFB3B3";
+        return;
+    }
+
+    const entry = {
+        date: new Date().toLocaleString('en-US', {
+            month: 'numeric',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true
+        }),
+        mood: moodSelect.options[moodSelect.selectedIndex].text || "Not specified",
+        text: entryText,
+        id: Date.now()
+    };
+
+    journalEntries.unshift(entry);
+    
+    // Save to localStorage
+    saveToLocalStorage();
+    
+    // Future: Save to Firebase
+    // saveToFirebase(entry);
+    
+    displayJournalEntries();
+    
+    journalTextarea.value = "";
+    saveStatus.textContent = "✓ Journal entry saved!";
+    saveStatus.style.color = "#7A9E9F";
+    
+    setTimeout(() => {
+        saveStatus.textContent = "";
+    }, 3000);
+}
+
+function toggleEntry(entryId) {
+    const entryElement = document.getElementById(`entry-${entryId}`);
+    const contentElement = entryElement.querySelector('.entry-content');
+    const arrowElement = entryElement.querySelector('.entry-arrow');
+    
+    contentElement.classList.toggle('open');
+    arrowElement.classList.toggle('open');
+}
+
+function displayJournalEntries() {
+    if (journalEntries.length === 0) {
+        journalEntriesList.innerHTML = "";
+        if (entriesHeader) {
+            entriesHeader.classList.add('hidden');
+        }
+        return;
+    }
+
+    if (entriesHeader) {
+        entriesHeader.classList.remove('hidden');
+    }
+
+    journalEntriesList.innerHTML = '';
+
+    journalEntries.forEach(entry => {
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'entry-card';
+        entryDiv.id = `entry-${entry.id}`;
+        entryDiv.innerHTML = `
+            <div class="entry-header" onclick="toggleEntry(${entry.id})">
+                <div class="entry-info">
+                    <div class="entry-date">${entry.date}</div>
+                    <div class="entry-mood">Mood: ${entry.mood}</div>
+                </div>
+                <div class="entry-arrow">▶</div>
+            </div>
+            <div class="entry-content">
+                <div class="entry-text">${entry.text}</div>
+            </div>
+        `;
+        journalEntriesList.appendChild(entryDiv);
+    });
+}
+
+// ==========================================
+// EXPORT FUNCTION
+// ==========================================
+function exportJournal() {
+    if (journalEntries.length === 0) {
+        alert('No journal entries to export');
+        return;
+    }
+
+    let exportText = "SPIRIT & SOUL - JOURNAL EXPORT\n";
+    exportText += "=" . repeat(50) + "\n\n";
+
+    journalEntries.forEach((entry, index) => {
+        exportText += `Entry #${journalEntries.length - index}\n`;
+        exportText += `Date: ${entry.date}\n`;
+        exportText += `Mood: ${entry.mood}\n`;
+        exportText += `\n${entry.text}\n`;
+        exportText += "\n" + "-".repeat(50) + "\n\n";
+    });
+
+    // Create downloadable file
+    const blob = new Blob([exportText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `spirit-soul-journal-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    showSyncStatus('Journal exported!');
+}
+
+// ==========================================
+// CONTACT FORM
+// ==========================================
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formStatus = document.getElementById('form-status');
+    const name = document.getElementById('name').value;
+    
+    // Future: Send to actual backend/Firebase
+    // For now, just show success message
+    
+    formStatus.innerHTML = `✓ Thank you, ${name}! Your message has been received.`;
+    formStatus.style.color = "#7A9E9F";
+    
+    this.reset();
+    
+    setTimeout(() => {
+        formStatus.innerHTML = '';
+    }, 5000);
+});
+
+// ==========================================
+// PWA INSTALL PROMPT
+// ==========================================
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show install banner
+    const installBanner = document.getElementById('install-banner');
+    if (installBanner) {
+        installBanner.classList.add('show');
+    }
+});
+
+document.getElementById('install-btn')?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to install prompt: ${outcome}`);
+        deferredPrompt = null;
+        
+        // Hide banner
+        document.getElementById('install-banner').classList.remove('show');
+    }
+});
+
+document.getElementById('install-close')?.addEventListener('click', () => {
+    document.getElementById('install-banner').classList.remove('show');
+    // Remember user dismissed it
+    localStorage.setItem('installPromptDismissed', 'true');
+});
+
+// Check if user previously dismissed
+if (localStorage.getItem('installPromptDismissed')) {
+    document.getElementById('install-banner')?.classList.remove('show');
+}
+
+// ==========================================
+// EVENT LISTENERS
+// ==========================================
+devotionalButton.addEventListener('click', displayDailyDevotional);
+moodSubmit.addEventListener('click', updateMood);
+saveJournalBtn.addEventListener('click', saveJournalEntry);
+
+moodSelect.addEventListener('change', function() {
+    if (this.value) {
+        const moodText = this.options[this.selectedIndex].text;
+        moodDisplay.textContent = `Selected: ${moodText}`;
+        moodDisplay.classList.remove('hidden');
+    }
+});
+
+// ==========================================
+// SERVICE WORKER REGISTRATION (PWA)
+// ==========================================
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('ServiceWorker registered:', registration);
+            })
+            .catch(err => {
+                console.log('ServiceWorker registration failed:', err);
+            });
+    });
+}
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Load saved data
+    loadFromLocalStorage();
+    
+    // Display journal entries
+    displayJournalEntries();
+    
+    // Restore mood selection
+    if (currentMood) {
+        const option = Array.from(moodSelect.options).find(opt => opt.value === currentMood);
+        if (option) {
+            moodSelect.value = currentMood;
+            const moodText = option.text;
+            moodDisplay.textContent = `Current mood: ${moodText}`;
+            moodDisplay.classList.remove('hidden');
+        }
+    }
+    
+    console.log('Spirit & Soul app initialized');
+    console.log(`Loaded ${journalEntries.length} journal entries`);
+});
+
+// ==========================================
+// PREVENT ZOOM ON DOUBLE TAP (iOS)
+// ==========================================
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, false);
+
+// Make functions globally available
+window.navigateTo = navigateTo;
+window.toggleEntry = toggleEntry;
+window.exportJournal = exportJournal;

@@ -119,6 +119,55 @@ function showSyncStatus(text) {
     }
 }
 
+// Universal notification function for install prompts and alerts
+function showNotification(message, type = 'info', duration = 3000) {
+    // Create notification element if it doesn't exist
+    let notification = document.getElementById('app-notification');
+    
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'app-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            max-width: 90%;
+            width: auto;
+            text-align: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: pre-line;
+            line-height: 1.5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        `;
+        document.body.appendChild(notification);
+    }
+    
+    // Set colors based on type
+    const colors = {
+        success: 'linear-gradient(135deg, #7A9E9F 0%, #6A8E8F 100%)',
+        error: 'linear-gradient(135deg, #E57373 0%, #EF5350 100%)',
+        info: 'linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%)',
+        warning: 'linear-gradient(135deg, #FFB74D 0%, #FFA726 100%)'
+    };
+    
+    notification.style.background = colors[type] || colors.info;
+    notification.textContent = message;
+    notification.style.opacity = '1';
+    
+    // Auto-hide after duration
+    setTimeout(() => {
+        notification.style.opacity = '0';
+    }, duration);
+}
+
+
 // ==========================================
 // FIREBASE PLACEHOLDER (Ready for integration)
 // ==========================================
@@ -478,6 +527,127 @@ if ('serviceWorker' in navigator) {
                 console.log('ServiceWorker registration failed:', err);
             });
     });
+}
+
+// ==========================================
+// PWA INSTALL PROMPT - WORKING VERSION
+// ==========================================
+let deferredPrompt;
+const installBanner = document.getElementById('install-banner');
+const installBtn = document.getElementById('install-btn');
+const dismissBtn = document.getElementById('dismiss-install');
+
+// Listen for the beforeinstallprompt event (Android/Chrome)
+window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('✅ Install prompt available');
+    // Prevent the mini-infobar from appearing
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    
+    // Check if user previously dismissed
+    if (!localStorage.getItem('installDismissed')) {
+        // Show our custom install banner
+        if (installBanner) {
+            installBanner.style.display = 'flex';
+            console.log('📱 Showing install banner');
+        }
+    }
+});
+
+// Handle install button click
+if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+        console.log('🔘 Install button clicked');
+        
+        if (!deferredPrompt) {
+            console.log('⚠️ No install prompt available - showing manual instructions');
+            
+            // Detect device and show appropriate instructions
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            
+            if (isIOS || isSafari) {
+                showNotification('📱 To install on iPhone:\n\n1. Tap the Share button (⬆️)\n2. Scroll and tap "Add to Home Screen"\n3. Tap "Add"', 'info', 6000);
+            } else {
+                showNotification('📱 To install:\n\n1. Tap the menu (⋮)\n2. Tap "Install app"\n\nOr use your browser\'s install option.', 'info', 5000);
+            }
+            return;
+        }
+        
+        // Hide our banner
+        if (installBanner) {
+            installBanner.style.display = 'none';
+        }
+        
+        // Show the browser's install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            console.log('✅ User accepted the install prompt');
+            showNotification('App installed successfully! Check your home screen. 🎉', 'success', 4000);
+        } else {
+            console.log('❌ User dismissed the install prompt');
+        }
+        
+        // Clear the deferredPrompt
+        deferredPrompt = null;
+    });
+}
+
+// Handle dismiss button click
+if (dismissBtn) {
+    dismissBtn.addEventListener('click', () => {
+        console.log('✖️ Dismiss button clicked');
+        if (installBanner) {
+            installBanner.style.display = 'none';
+        }
+        // Remember that user dismissed it (for 7 days)
+        const dismissTime = new Date().getTime();
+        localStorage.setItem('installDismissed', dismissTime.toString());
+    });
+}
+
+// Check if dismiss is expired (after 7 days, show banner again)
+const dismissTime = localStorage.getItem('installDismissed');
+if (dismissTime) {
+    const now = new Date().getTime();
+    const daysSinceDismiss = (now - parseInt(dismissTime)) / (1000 * 60 * 60 * 24);
+    if (daysSinceDismiss > 7) {
+        localStorage.removeItem('installDismissed');
+    }
+}
+
+// Detect if app is already installed
+window.addEventListener('appinstalled', () => {
+    console.log('🎉 PWA was installed successfully!');
+    // Hide the install banner
+    if (installBanner) {
+        installBanner.style.display = 'none';
+    }
+    showNotification('App installed! You can now use it from your home screen. 📱✨', 'success', 5000);
+    // Remember it's installed
+    localStorage.setItem('appInstalled', 'true');
+});
+
+// Check if running in standalone mode (already installed)
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    console.log('📱 App is running in standalone mode (installed)');
+    // Hide install banner if app is already installed
+    if (installBanner) {
+        installBanner.style.display = 'none';
+    }
+    localStorage.setItem('appInstalled', 'true');
+}
+
+// Also check localStorage for install status
+if (localStorage.getItem('appInstalled') === 'true') {
+    if (installBanner) {
+        installBanner.style.display = 'none';
+    }
 }
 
 // ==========================================

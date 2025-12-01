@@ -192,6 +192,116 @@
                 </div>
             </div>
 
+            <!-- Support Page -->
+            <div id="support-page" class="page">
+                <h1 class="page-title">💝 Support This Ministry</h1>
+                
+                <div class="card">
+                    <p class="subtitle-text" style="text-align: center; line-height: 1.8;">
+                        Spirit & Soul is a <strong>free ministry</strong> dedicated to helping people connect with God through their emotions and experiences.
+                    </p>
+                    <p class="subtitle-text" style="text-align: center; line-height: 1.8; margin-top: 1rem;">
+                        If this app has blessed you, would you prayerfully consider supporting our work?
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Choose Your Support</div>
+                    
+                    <!-- Donation Amount Buttons -->
+                    <div class="donation-buttons">
+                        <button class="donation-btn" data-amount="3" onclick="selectDonation(3)">
+                            $3
+                            <div class="donation-subtitle">Coffee</div>
+                        </button>
+                        <button class="donation-btn" data-amount="5" onclick="selectDonation(5)">
+                            $5
+                            <div class="donation-subtitle">Lunch</div>
+                        </button>
+                        <button class="donation-btn active" data-amount="10" onclick="selectDonation(10)">
+                            $10
+                            <div class="donation-subtitle">Generous</div>
+                        </button>
+                        <button class="donation-btn" data-amount="25" onclick="selectDonation(25)">
+                            $25
+                            <div class="donation-subtitle">Blessing</div>
+                        </button>
+                    </div>
+
+                    <!-- Custom Amount -->
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label class="form-label">Or Enter Custom Amount</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #B8A99A; font-size: 1.2rem;">$</span>
+                            <input 
+                                type="number" 
+                                id="custom-amount" 
+                                class="contact-input" 
+                                style="padding-left: 35px;" 
+                                placeholder="0.00" 
+                                min="1"
+                                step="1"
+                                oninput="selectCustomDonation(this.value)"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Donation Type -->
+                    <div class="donation-type-selector" style="margin: 1.5rem 0;">
+                        <button class="donation-type-btn active" data-type="onetime" onclick="selectDonationType('onetime')">
+                            One-Time Gift
+                        </button>
+                        <button class="donation-type-btn" data-type="monthly" onclick="selectDonationType('monthly')">
+                            Monthly Support
+                        </button>
+                    </div>
+
+                    <!-- Selected Amount Display -->
+                    <div id="donation-summary" class="donation-summary">
+                        You're giving <strong id="selected-amount">$10</strong> <span id="donation-frequency">once</span>
+                    </div>
+
+                    <!-- Payment Buttons -->
+                    <div style="margin-top: 2rem;">
+                        <button class="btn btn-primary" onclick="donateWithPayPal()" style="margin-bottom: 1rem;">
+                            💳 Donate with PayPal
+                        </button>
+                        <button class="btn btn-secondary" onclick="donateWithStripe()" style="background: #635BFF;">
+                            💳 Donate with Card (Stripe)
+                        </button>
+                    </div>
+
+                    <p style="text-align: center; font-size: 0.85rem; color: #B8A99A; margin-top: 1.5rem; line-height: 1.6;">
+                        🔒 Secure payment processing<br>
+                        💝 100% of your donation supports this ministry<br>
+                        📧 Tax-deductible receipt via email
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Why Support Us?</div>
+                    <ul style="color: #C4B5A9; line-height: 2; margin-left: 1.5rem;">
+                        <li>Keep the app free for everyone</li>
+                        <li>Develop new devotional content</li>
+                        <li>Add audio and video features</li>
+                        <li>Reach more people who need hope</li>
+                        <li>Cover server and development costs</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Other Ways to Give</div>
+                    <div style="color: #C4B5A9; line-height: 1.8;">
+                        <p><strong>Venmo:</strong> @SpiritAndSoul</p>
+                        <p><strong>Cash App:</strong> $SpiritAndSoul</p>
+                        <p><strong>Zelle:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90f4fffef1e4f9fffee3d0e3e0f9e2f9e4f1fef4e3ffe5fcbef3fffd">[email&#160;protected]</a></p>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; font-style: italic;">
+                            *Update these with your actual payment details
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Contact Page -->
             <div id="contact-page" class="page">
                 <h1 class="page-title">Get In Touch</h1>
@@ -206,8 +316,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="email">Email Address</label>
-                            <input type="email" id="email" class="contact-input" required placeholder="your.email@example.com">
+                      ="contact-input" required placeholder="your.email@example.com">
                         </div>
 
                         <div class="form-group">
@@ -239,7 +348,7 @@
                     
                     <div style="margin-bottom: 1rem;">
                         <h3 style="color: #B8D4D4; font-size: 1rem; margin-bottom: 0.5rem;">📧 Email</h3>
-                        <p style="color: #C4B5A9; font-size: 0.9rem;">hello@spiritandsoul.com</p>
+                        <p style="color: #C4B5A9; font-size: 0.9rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="553d3039393a1526253c273c21343b31263a20397b363a38">[email&#160;protected]</a></p>
                     </div>
                     
                     <div style="margin-bottom: 1rem;">
@@ -265,6 +374,10 @@
                 <div class="nav-icon">✨</div>
                 <div>Tracker</div>
             </a>
+            <a href="#" class="nav-item" data-page="support" onclick="navigateTo('support'); return false;">
+                <div class="nav-icon">💝</div>
+                <div>Support</div>
+            </a>
             <a href="#" class="nav-item" data-page="about" onclick="navigateTo('about'); return false;">
                 <div class="nav-icon">ℹ️</div>
                 <div>About</div>
@@ -276,7 +389,6 @@
         </nav>
     </div>
 
-    <!-- Main App Script -->
     <script src="app.js"></script>
 </body>
 </html>

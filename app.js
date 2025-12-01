@@ -662,3 +662,114 @@ document.addEventListener('touchend', function (event) {
 window.navigateTo = navigateTo;
 window.toggleEntry = toggleEntry;
 window.exportJournal = exportJournal;
+
+// ==========================================
+// DONATION SYSTEM
+// ==========================================
+
+let selectedDonationAmount = 10; // Default $10
+let donationType = 'onetime'; // 'onetime' or 'monthly'
+
+function selectDonation(amount) {
+    selectedDonationAmount = amount;
+    
+    // Clear custom input
+    const customInput = document.getElementById('custom-amount');
+    if (customInput) {
+        customInput.value = '';
+    }
+    
+    // Update button states
+    document.querySelectorAll('.donation-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.dataset.amount) === amount) {
+            btn.classList.add('active');
+        }
+    });
+    
+    updateDonationSummary();
+}
+
+function selectCustomDonation(amount) {
+    if (amount && amount > 0) {
+        selectedDonationAmount = parseFloat(amount);
+        
+        // Clear preset buttons
+        document.querySelectorAll('.donation-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        updateDonationSummary();
+    }
+}
+
+function selectDonationType(type) {
+    donationType = type;
+    
+    // Update button states
+    document.querySelectorAll('.donation-type-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.type === type) {
+            btn.classList.add('active');
+        }
+    });
+    
+    updateDonationSummary();
+}
+
+function updateDonationSummary() {
+    const amountEl = document.getElementById('selected-amount');
+    const frequencyEl = document.getElementById('donation-frequency');
+    
+    if (amountEl) {
+        amountEl.textContent = `$${selectedDonationAmount}`;
+    }
+    
+    if (frequencyEl) {
+        frequencyEl.textContent = donationType === 'monthly' ? 'per month' : 'once';
+    }
+}
+
+function donateWithPayPal() {
+    // ⚠️ IMPORTANT: UPDATE THIS WITH YOUR PAYPAL USERNAME!
+    // Go to: https://www.paypal.com/paypalme/
+    // Create your link and replace 'YOURPAYPALUSERNAME' below
+    
+    const paypalUsername = 'YOURPAYPALUSERNAME'; // ⚠️ CHANGE THIS!
+    const amount = selectedDonationAmount;
+    
+    // Check if PayPal username has been updated
+    if (paypalUsername === 'YOURPAYPALUSERNAME') {
+        showNotification('⚠️ Please update PayPal username in app.js first!', 'warning', 5000);
+        console.error('PayPal username not configured. Update the paypalUsername variable in app.js');
+        return;
+    }
+    
+    // PayPal.me link format
+    const paypalURL = `https://www.paypal.com/paypalme/${paypalUsername}/${amount}USD`;
+    
+    // Open PayPal in new tab
+    window.open(paypalURL, '_blank');
+    
+    // Show thank you message
+    showNotification(`🙏 Thank you! Redirecting to PayPal for your $${amount} donation...`, 'success', 4000);
+    
+    // Track donation attempt
+    console.log(`Donation attempt: $${amount} ${donationType}`);
+}
+
+function donateWithStripe() {
+    // This requires Stripe setup (coming in Phase 3)
+    // For now, show message
+    showNotification('💳 Stripe payment coming soon! Please use PayPal for now.', 'info', 4000);
+    
+    // TODO: Implement Stripe Checkout in Phase 3
+    console.log('Stripe donation clicked - not yet implemented');
+}
+
+// Make donation functions globally available
+window.selectDonation = selectDonation;
+window.selectCustomDonation = selectCustomDonation;
+window.selectDonationType = selectDonationType;
+window.donateWithPayPal = donateWithPayPal;
+window.donateWithStripe = donateWithStripe;

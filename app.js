@@ -461,38 +461,9 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
 });
 
 // ==========================================
-// PWA INSTALL PROMPT
+// OLD PWA CODE REMOVED - Using enhanced version below
 // ==========================================
-let deferredPrompt;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    // Show install banner
-    const installBanner = document.getElementById('install-banner');
-    if (installBanner) {
-        installBanner.classList.add('show');
-    }
-});
-
-document.getElementById('install-btn')?.addEventListener('click', async () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log(`User response to install prompt: ${outcome}`);
-        deferredPrompt = null;
-        
-        // Hide banner
-        document.getElementById('install-banner').classList.remove('show');
-    }
-});
-
-document.getElementById('install-close')?.addEventListener('click', () => {
-    document.getElementById('install-banner').classList.remove('show');
-    // Remember user dismissed it
-    localStorage.setItem('installPromptDismissed', 'true');
-});
 
 // Check if user previously dismissed
 if (localStorage.getItem('installPromptDismissed')) {

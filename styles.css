@@ -542,3 +542,122 @@ body {
         font-size: 1.25rem;
     }
 }
+
+/* ==========================================
+DONATION / SUPPORT PAGE STYLES
+========================================== */
+
+.donation-buttons {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 0.75rem;
+margin: 1.5rem 0;
+}
+
+.donation-btn {
+background: rgba(90, 80, 85, 0.4);
+border: 2px solid rgba(122, 158, 159, 0.3);
+border-radius: 12px;
+padding: 1rem 0.5rem;
+color: #E8DDD0;
+font-size: 1.2rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.5rem;
+}
+
+.donation-btn:hover {
+background: rgba(122, 158, 159, 0.2);
+border-color: #7A9E9F;
+transform: translateY(-2px);
+}
+
+.donation-btn.active {
+background: rgba(122, 158, 159, 0.3);
+border-color: #7A9E9F;
+box-shadow: 0 0 20px rgba(122, 158, 159, 0.3);
+}
+
+.donation-subtitle {
+font-size: 0.7rem;
+font-weight: 400;
+color: #B8A99A;
+}
+
+.donation-type-selector {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0.75rem;
+}
+
+.donation-type-btn {
+background: rgba(90, 80, 85, 0.4);
+border: 2px solid rgba(122, 158, 159, 0.3);
+border-radius: 10px;
+padding: 0.875rem;
+color: #E8DDD0;
+font-size: 0.95rem;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.donation-type-btn:hover {
+background: rgba(122, 158, 159, 0.2);
+border-color: #7A9E9F;
+}
+
+.donation-type-btn.active {
+background: rgba(122, 158, 159, 0.3);
+border-color: #7A9E9F;
+}
+
+.donation-summary {
+background: rgba(122, 158, 159, 0.15);
+border: 1px solid rgba(122, 158, 159, 0.3);
+border-radius: 10px;
+padding: 1rem;
+text-align: center;
+color: #E8DDD0;
+font-size: 1.1rem;
+margin: 1.5rem 0;
+}
+
+.donation-summary strong {
+color: #7A9E9F;
+font-size: 1.4rem;
+}
+
+.btn-secondary {
+background: linear-gradient(135deg, #7A9E9F 0%, #6A8E8F 100%);
+border: none;
+color: white;
+padding: 1rem;
+border-radius: 10px;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+width: 100%;
+transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+opacity: 0.9;
+transform: translateY(-2px);
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+.donation-buttons {
+grid-template-columns: repeat(2, 1fr);
+gap: 0.625rem;
+}
+
+.donation-btn {
+padding: 0.875rem 0.5rem;
+font-size: 1.1rem;
+}
+}

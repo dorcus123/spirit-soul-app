@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2C2328">
+    <meta name="description" content="Spirit & Soul - Daily Devotional Mood Tracker. Connect your heart with Heaven through personalized devotionals and reflective journaling.">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <title>Spirit & Soul - Daily Devotional</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Install Banner -->
+        <div id="install-banner" class="install-banner">
+            <div class="install-text">Install Spirit & Soul for easy access</div>
+            <button class="install-btn" id="install-btn">Install</button>
+            <button class="install-close" id="install-close">×</button>
+        </div>
+
+        <!-- Sync Status -->
+        <div id="sync-status" class="sync-status">
+            <span class="loading"></span> Saving...
+        </div>
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-title">SPIRIT&SOUL</div>
+            <div class="app-subtitle">Where Mind Meets Soul</div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="hero-section">
+                    <h1 class="hero-title">Welcome</h1>
+                    <p class="hero-description">Connect your heart with Heaven through personalized devotionals and reflective journaling.</p>
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">✨</div>
+                        <div class="feature-content">
+                            <h3>Daily Devotionals</h3>
+                            <p>Receive a word from God tailored to exactly how you're feeling today.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">📖</div>
+                        <div class="feature-content">
+                            <h3>Journal Your Heart</h3>
+                            <p>Capture your thoughts, prayers, and revelations that save automatically.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🕊️</div>
+                        <div class="feature-content">
+                            <h3>Track Your Journey</h3>
+                            <p>Watch how God has been speaking to you and guiding your path over time.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">💚</div>
+                        <div class="feature-content">
+                            <h3>Find Peace</h3>
+                            <p>Let Scripture minister to your emotions and bring you closer to God.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="navigateTo('tracker')">Begin Your Journey</button>
+            </div>
+
+            <!-- Mood Tracker Page -->
+            <div id="tracker-page" class="page">
+                <h1 class="page-title">What do you feel God is saying to you today?</h1>
+                
+                <div class="card">
+                    <div class="card-title">
+                        ✨ Today's Devotional
+                    </div>
+                    <div class="card-content" id="devotional-display">
+                        <p style="text-align: center; color: #9CB4B4; padding: 1.5rem 0;">
+                            Select your mood and receive a word of inspiration
+                        </p>
+                    </div>
+                </div>
+
+                <p class="subtitle-text">Take a moment to breathe, reflect, and listen. God still speaks through the quiet places of your heart.</p>
+
+                <div class="form-group">
+                    <label class="form-label" for="mood-select">How are you feeling?</label>
+                    <select id="mood-select" class="form-select">
+                        <option value="">Select your mood...</option>
+                        <option value="happy">Joyful/Grateful</option>
+                        <option value="sad">Heavy/Discouraged</option>
+                        <option value="anxious">Worried/Fearful</option>
+                        <option value="hopeful">Hopeful/Expectant</option>
+                        <option value="confused">Confused/Seeking Direction</option>
+                        <option value="calm">Calm/Resting in God</option>
+                        <option value="overwhelmed">Overwhelmed/Burdened</option>
+                        <option value="lonely">Lonely/Isolated</option>
+                        <option value="angry">Angry/Frustrated</option>
+                        <option value="grateful">Deeply Grateful</option>
+                        <option value="doubtful">Doubtful/Questioning</option>
+                        <option value="peaceful">Peaceful/Content</option>
+                        <option value="broken">Broken/Hurting</option>
+                        <option value="inspired">Inspired/Motivated</option>
+                        <option value="waiting">Waiting/Patient</option>
+                    </select>
+                    <div id="mood-display" class="mood-display hidden"></div>
+                    <div id="update-notification" class="notification hidden"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="mood-submit">Update Mood</button>
+                    <button class="btn btn-primary" id="devotional-button">Get Inspiration</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        📖 Journal Your Thoughts
+                    </div>
+                    <p class="subtitle-text" style="margin-top: 0;">Reflect on what God is speaking to your heart. Write freely...</p>
+                    <textarea 
+                        class="journal-textarea" 
+                        id="journal-entry" 
+                        placeholder="What's on your heart today? How did this devotional speak to you?"></textarea>
+                    <button class="btn btn-primary" id="save-journal" style="margin-top: 1rem;">
+                        Save Journal Entry
+                    </button>
+                    <div id="save-status" class="save-status"></div>
+                    
+                    <div id="journal-entries-container">
+                        <div class="entries-header hidden" id="entries-header">
+                            <span>Previous Entries</span>
+                            <button class="export-btn" id="export-btn" onclick="exportJournal()">Export</button>
+                        </div>
+                        <div id="journal-entries-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Page -->
+            <div id="about-page" class="page">
+                <h1 class="page-title">About Spirit & Soul</h1>
+                
+                <div class="about-section">
+                    <h2> Spirit & Soul was created from a sacred place of encounter, obedience, and transformation.</h2>
+                    <p>
+
+                        I am Dorcus Nagadya, the founder of Spirit & Soul, and this app was birthed through my personal walk with God through seasons of isolation, deep spiritual encounters, emotional healing, and divine repositioning. It was created not from theory, but from  my lived experience in the presence of God.
+                        
+                        There were moments where loneliness became a sanctuary, trauma became a doorway, and silence became the place where God spoke the loudest. In those hidden seasons, God began to realign my spirit, heal my soul, and sharpen my discernment. What felt like separation was actually preparation.
+                        
+                        As a prophetess and intercessor, I have learned that God often pulls us away so He can speak clearly stripping distractions, healing wounds, and restoring identity. Spirit & Soul was formed in those moments of alignment, where I learned to listen, journal, reflect, worship, as well as strengthening my spiritual practices, to receive God’s voice in the quiet places of the heart.
+                        
+                        This app exists because I needed it myself and for the people that God has entrusted me with.
+                        
+                        Spirit & Soul was created as a sacred digital space for those navigating emotional weight, spiritual growth, healing from trauma, and longing for deeper intimacy with God. It is a reflection of my journey of repositioning choosing obedience over world noise, alignment over survival,and intimacy with God over performance and strategically waiting for the devine time.
+                        
+                        Spirit & Soul is also an expression of divine instruction.
+                        
+                        As a single mother who has experienced God’s help, provision, and faithfulness firsthand, I've always  carried a burden to reach beyond myself to widows, single mothers, and orphans "children", especially in Uganda Africa were i come from, who are in need of support, covering, and hope. Spirit & Soul carries a call not only to spiritual growth, but to compassionate action.
+                        
+                        Within this space, there is a place for prayer and intercession a place where we can stand in the gap together, lifting up lives, families, and nations before God. There is also an opportunity to give, for those whom God leads, toward helping widows and children who lack housing, school fees, food, clothing, and basic care. Every act of generosity flows from prayer and obedience, not obligation.
+                        
+                        Spirit & Soul exists because I believe the presence of God should lead us both inward for healing and outward for service.
+                        
+                        Every devotional, prompt, reflection, and outreach is rooted in the belief that:
+                            •	God cares deeply about our emotions
+                            •	Healing is both spiritual and emotional
+                            •	God still speaks
+                            •	Prayer changes lives
+                            •	And love must be expressed through action
+                        
+                        Spirit & Soul is an invitation to pause, breathe, listen, pray, and respond to allow God to meet you exactly where you are, and to join God in caring for others just as He met me.
+                        
+                        This platform is not about perfection.
+                        It is about presence.
+                        It is not about religion.
+                        It is about relationship.
+                        It is not only about personal growth.
+                        It is about obedience to God’s heart for people.
+                        
+                        Spirit & Soul was created to help others find what I found:
+                        peace in God’s presence, clarity in His voice, healing in His truth, and purpose in serving others.</p>
+                </div>
+
+                <div class="about-section">
+                    <h2>What it Offers</h2>
+                    <p>The daily devotional mood tracker helps you to:</p>
+                    <ul>
+                        <li>Connect with God through personalized devotionals</li>
+                        <li>Track your emotional and spiritual journey</li>
+                        <li>Find peace through Scripture</li>
+                        <li>Grow spiritually through daily reflection</li>
+                    </ul>
+                </div>
+
+                <div class="about-section">
+                    <h2>How It Works</h2>
+                    <ol>
+                        <li>Select how you're feeling</li>
+                        <li>Receive a personalized prophetic word</li>
+                        <li>Journal your thoughts and reflections</li>
+                        <li>Review your spiritual journey over time</li>
+                    </ol>
+                </div>
+
+                <div class="about-section">
+                    <h2>Heart</h2>
+                    <p>I believe that God cares about every emotion you experience. Whether you're joyful, overwhelmed, peaceful, or broken He meets you right where you are.</p>
+                </div>
+
+                <div class="about-section">
+                    <h2>Data & Privacy</h2>
+                    <p>Your journal entries are saved locally on your device. Your conversations with God are sacred and private. We never share or sell your data.</p>
+                </div>
+            </div>
+
+            <!-- Support Page -->
+            <div id="support-page" class="page">
+                <h1 class="page-title">💝 Support This Ministry</h1>
+                
+                <div class="card">
+                    <p class="subtitle-text" style="text-align: center; line-height: 1.8;">
+                        Spirit & Soul is a <strong>free ministry</strong> dedicated to helping people connect with God through their emotions and experiences.
+                    </p>
+                    <p class="subtitle-text" style="text-align: center; line-height: 1.8; margin-top: 1rem;">
+                        If this app has blessed you, would you prayerfully consider supporting as we support others?
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Choose Your Support</div>
+                    
+                    <!-- Donation Amount Buttons -->
+                    <div class="donation-buttons">
+                        <button class="donation-btn" data-amount="3" onclick="selectDonation(3)">
+                            $3
+                            <div class="donation-subtitle">cofee</div>
+                        </button>
+                        <button class="donation-btn" data-amount="5" onclick="selectDonation(5)">
+                            $5
+                            <div class="donation-subtitle">app maintenance</div>
+                        </button>
+                        <button class="donation-btn active" data-amount="10" onclick="selectDonation(10)">
+                            $10
+                            <div class="donation-subtitle">Generous</div>
+                        </button>
+                        <button class="donation-btn" data-amount="25" onclick="selectDonation(25)">
+                            $25
+                            <div class="donation-subtitle">Blessing</div>
+                        </button>
+                    </div>
+
+                    <!-- Custom Amount -->
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label class="form-label">Or Enter Custom Amount</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #B8A99A; font-size: 1.2rem;">$</span>
+                            <input 
+                                type="number" 
+                                id="custom-amount" 
+                                class="contact-input" 
+                                style="padding-left: 35px;" 
+                                placeholder="0.00" 
+                                min="1"
+                                step="1"
+                                oninput="selectCustomDonation(this.value)"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Donation Type -->
+                    <div class="donation-type-selector" style="margin: 1.5rem 0;">
+                        <button class="donation-type-btn active" data-type="onetime" onclick="selectDonationType('onetime')">
+                            One-Time Gift
+                        </button>
+                        <button class="donation-type-btn" data-type="monthly" onclick="selectDonationType('monthly')">
+                            Monthly Support
+                        </button>
+                    </div>
+
+                    <!-- Selected Amount Display -->
+                    <div id="donation-summary" class="donation-summary">
+                        You're giving <strong id="selected-amount">$10</strong> <span id="donation-frequency">once</span>
+                    </div>
+
+                    <!-- Payment Buttons -->
+                    <div style="margin-top: 2rem;">
+                        <button class="btn btn-primary" onclick="donateWithPayPal()" style="margin-bottom: 1rem;">
+                            💳 Donate with PayPal
+                        </button>
+                        <button class="btn btn-secondary" onclick="donateWithStripe()" style="background: #635BFF;">
+                            💳 Donate with Card (Stripe)
+                        </button>
+                    </div>
+
+                    <p style="text-align: center; font-size: 0.85rem; color: #B8A99A; margin-top: 1.5rem; line-height: 1.6;">
+                        🔒 Secure payment processing<br>
+                        💝 100% of your donation supports this ministry<br>
+                        📧 Tax-deductible receipt via email
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Why Support Us?</div>
+                    <ul style="color: #C4B5A9; line-height: 2; margin-left: 1.5rem;">
+                        <li>⁠Help keep Spirit & Soul accessible as a free, prayer centered space for spiritual and emotional healing</li>
+                        <li>Support widows, women, and children in Africa with basic needs such as food, education, clothing, and shelter
+                        </li>Strengthen prayer and intercession initiatives that cover individuals, families, and communities
+                         <li>Enable outreach rooted in obedience, stewardship, and love as Jesus Christ did.
+                        </li>
+                        <li>Sustain the development and care of this platform, including hosting, security, and growth tools
+                        </li>
+                        <li>Cover server and development costs</li>
+                        <li>Help extend hope to those who feel unseen, unheard, or forgotten</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Other Ways to Give</div>
+                    <div style="color: #C4B5A9; line-height: 1.8;">
+                        <p><strong>Venmo:</strong> @SpiritAndSoul</p>
+                        <p><strong>Cash App:</strong> $SpiritAndSoul</p>
+                        <p><strong>Zelle:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90f4fffef1e4f9fffee3d0e3e0f9e2f9e4f1fef4e3ffe5fcbef3fffd">[email&#160;protected]</a></p>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; font-style: italic;">
+                        
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Page -->
+            <div id="contact-page" class="page">
+                <h1 class="page-title">Get In Touch</h1>
+                
+                <p class="subtitle-text">We'd love to hear from you. Share your feedback, questions, or testimony with us.</p>
+
+                <div class="card">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label class="form-label" for="name">Your Name</label>
+                            <input type="text" id="name" class="contact-input" required placeholder="Enter your name">
+                        </div>
+
+                        <div class="form-group">
+                      
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="subject">Subject</label>
+                            <select id="subject" class="form-select" required>
+                                <option value="">Select a subject...</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="question">Question</option>
+                                <option value="testimony">Share a Testimony</option>
+                                <option value="suggestion">Suggestion</option>
+                                <option value="support">Technical Support</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="message">Your Message</label>
+                            <textarea id="message" class="journal-textarea" rows="6" required placeholder="Share your thoughts with us..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+
+                        <div id="form-status" class="save-status"></div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Other Ways to Connect</div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h3 style="color: #B8D4D4; font-size: 1rem; margin-bottom: 0.5rem;">📧 Email</h3>
+                        <p style="color: #C4B5A9; font-size: 0.9rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="553d3039393a1526253c273c21343b31263a20397b363a38">[email&#160;protected]</a></p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <h3 style="color: #B8D4D4; font-size: 1rem; margin-bottom: 0.5rem;">🙏 Prayer Requests</h3>
+                        <p style="color: #C4B5A9; font-size: 0.9rem;">We'd be honored to pray with you. Include it in your message above.</p>
+                    </div>
+                    
+                    <div>
+                        <h3 style="color: #B8D4D4; font-size: 1rem; margin-bottom: 0.5rem;">💬 Testimonies</h3>
+                        <p style="color: #C4B5A9; font-size: 0.9rem;">Has God spoken to you through Spirit & Soul? We'd love to hear your story!</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-page="home" onclick="navigateTo('home'); return false;">
+                <div class="nav-icon">🏠</div>
+                <div>Home</div>
+            </a>
+            <a href="#" class="nav-item" data-page="tracker" onclick="navigateTo('tracker'); return false;">
+                <div class="nav-icon">✨</div>
+                <div>Tracker</div>
+            </a>
+            <a href="#" class="nav-item" data-page="support" onclick="navigateTo('support'); return false;">
+                <div class="nav-icon">💝</div>
+                <div>Support</div>
+            </a>
+            <a href="#" class="nav-item" data-page="about" onclick="navigateTo('about'); return false;">
+                <div class="nav-icon">ℹ️</div>
+                <div>About</div>
+            </a>
+            <a href="#" class="nav-item" data-page="contact" onclick="navigateTo('contact'); return false;">
+                <div class="nav-icon">✉️</div>
+                <div>Contact</div>
+            </a>
+            <a href="https://dorcus123.github.io/spirit-soulprayerplace/" class="nav-item" target="_blank">
+                <div class="nav-icon">🙏</div>
+                <div>Prayer place</div>
+            </a>
+            
+            <a href="https://dorcus123.github.io/S-Soutreach/" class="nav-item" target="_blank">
+                <div class="nav-icon">💝</div>
+                <div>Donate</div>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

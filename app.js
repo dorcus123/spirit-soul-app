@@ -259,6 +259,7 @@ function navigateTo(page) {
 // DEVOTIONAL FUNCTIONS
 // ==========================================
 function displayDailyDevotional() {
+    if (!trackDevotionalUse()) return;
     const selectedMood = moodSelect.value;
     
     if (!selectedMood || selectedMood === "") {
@@ -1036,3 +1037,84 @@ window.showPrayer = showPrayer;
 window.closePrayer = closePrayer;
 window.openTeaching = openTeaching;
 window.closeTeaching = closeTeaching;
+// ===================================================
+// SUBSCRIPTION & PAYWALL SYSTEM
+// ===================================================
+var isPremium = localStorage.getItem('spiritsoul_premium') === 'true';
+var devotionalCount = parseInt(localStorage.getItem('spiritsoul_devotional_count') || '0');
+var FREE_PRAYERS = ['healing', 'breakthrough'];
+var FREE_TEACHING_COUNT = 2;
+var FREE_DEVOTIONAL_COUNT = 3;
+
+function checkPremium() {
+    isPremium = localStorage.getItem('spiritsoul_premium') === 'true';
+    return isPremium;
+}
+
+function showPaywall(feature) {
+    var messages = {
+        prayers: 'You\'ve used your 2 free prayers!',
+        teachings: 'You\'ve used your 2 free teachings!',
+        devotionals: 'You\'ve used your 3 free devotionals!'
+    };
+    var msg = messages[feature] || 'This is a premium feature!';
+    document.getElementById('paywall-message').textContent = msg;
+    document.getElementById('paywall-overlay').style.display = 'flex';
+}
+
+function closePaywall() {
+    document.getElementById('paywall-overlay').style.display = 'none';
+}
+
+function initiatePurchase() {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.purchase) {
+        window.webkit.messageHandlers.purchase.postMessage({
+            productId: 'com.spiritsoul.app.premium.monthly'
+        });
+    } else {
+        showNotification('Opening subscription... (requires app install)', 'info', 4000);
+    }
+}
+
+function unlockPremium() {
+    localStorage.setItem('spiritsoul_premium', 'true');
+    isPremium = true;
+    closePaywall();
+    showNotification('✨ Welcome to Spirit & Soul Premium!', 'success', 4000);
+}
+
+function showPrayerWithPaywall(topic) {
+    if (!checkPremium() && !FREE_PRAYERS.includes(topic)) {
+        showPaywall('prayers');
+        return;
+    }
+    showPrayer(topic);
+}
+
+function openTeachingWithPaywall(index) {
+    if (!checkPremium() && index >= FREE_TEACHING_COUNT) {
+        showPaywall('teachings');
+        return;
+    }
+    openTeaching(index);
+}
+
+function trackDevotionalUse() {
+    if (checkPremium()) return true;
+    devotionalCount = parseInt(localStorage.getItem('spiritsoul_devotional_count') || '0');
+    if (devotionalCount >= FREE_DEVOTIONAL_COUNT) {
+        showPaywall('devotionals');
+        return false;
+    }
+    devotionalCount++;
+    localStorage.setItem('spiritsoul_devotional_count', devotionalCount.toString());
+    return true;
+}
+
+window.showPrayerWithPaywall = showPrayerWithPaywall;
+window.openTeachingWithPaywall = openTeachingWithPaywall;
+window.trackDevotionalUse = trackDevotionalUse;
+window.showPaywall = showPaywall;
+window.closePaywall = closePaywall;
+window.initiatePurchase = initiatePurchase;
+window.unlockPremium = unlockPremium;

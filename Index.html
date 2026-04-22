@@ -296,17 +296,17 @@
     </p>
 
     <div id="prayer-topics" class="prayer-topics-grid">
-        <button class="prayer-topic-btn" onclick="showPrayer('healing')">🌿<br>Healing</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('breakthrough')">⚡<br>Breakthrough</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('family')">👨‍👩‍👧<br>Family</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('protection')">🛡️<br>Protection</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('finances')">🌾<br>Finances</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('identity')">✨<br>Identity</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('nations')">🌍<br>Nations</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('peace')">🕊️<br>Peace</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('deliverance')">🔓<br>Deliverance</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('oil')">🕯️<br>Anointing Oil</button>
-        <button class="prayer-topic-btn" onclick="showPrayer('communion')">🍞<br>Communion</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('healing')">🌿<br>Healing</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('breakthrough')">⚡<br>Breakthrough</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('family')">👨‍👩‍👧<br>Family</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('protection')">🛡️<br>Protection</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('finances')">🌾<br>Finances</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('identity')">✨<br>Identity</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('nations')">🌍<br>Nations</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('peace')">🕊️<br>Peace</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('deliverance')">🔓<br>Deliverance</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('oil')">🕯️<br>Anointing Oil</button>
+        <button class="prayer-topic-btn" onclick="showPrayerWithPaywall('communion')">🍞<br>Communion</button>
     </div>
 
     <div id="prayer-display" style="display:none;">
@@ -327,25 +327,25 @@
     </p>
 
     <div id="teachings-list">
-        <div class="card teaching-card" onclick="openTeaching(0)">
+        <div class="card teaching-card" onclick="openTeachingWithPaywall(0)">
             <div style="color:#6dbfb8; font-weight:700; font-size:1rem; margin-bottom:0.4rem;">The Power of Prophetic Intercession</div>
             <div style="font-size:0.8rem; color:#6dbfb8; margin-bottom:0.6rem;">📖 Ezekiel 37:1-10</div>
             <div style="font-size:0.85rem; color:#999; line-height:1.6;">Standing in the gap for others is one of the highest callings God places on a believer...</div>
         </div>
 
-        <div class="card teaching-card" onclick="openTeaching(1)">
+        <div class="card teaching-card" onclick="openTeachingWithPaywall(1)">
             <div style="color:#6dbfb8; font-weight:700; font-size:1rem; margin-bottom:0.4rem;">Walking in Your Prophetic Identity</div>
             <div style="font-size:0.8rem; color:#6dbfb8; margin-bottom:0.6rem;">📖 Jeremiah 1:5</div>
             <div style="font-size:0.85rem; color:#999; line-height:1.6;">Before you were formed in the womb, God knew you. Your identity is not shaped by your past...</div>
         </div>
 
-        <div class="card teaching-card" onclick="openTeaching(2)">
+        <div class="card teaching-card" onclick="openTeachingWithPaywall(2)">
             <div style="color:#6dbfb8; font-weight:700; font-size:1rem; margin-bottom:0.4rem;">Seated in Heavenly Places</div>
             <div style="font-size:0.8rem; color:#6dbfb8; margin-bottom:0.6rem;">📖 Ephesians 2:6</div>
             <div style="font-size:0.85rem; color:#999; line-height:1.6;">When we understand our position in Christ, prayer becomes a declaration from victory...</div>
         </div>
 
-        <div class="card teaching-card" onclick="openTeaching(3)">
+        <div class="card teaching-card" onclick="openTeachingWithPaywall(3)">
             <div style="color:#6dbfb8; font-weight:700; font-size:1rem; margin-bottom:0.4rem;">The Altar of Consecration</div>
             <div style="font-size:0.8rem; color:#6dbfb8; margin-bottom:0.6rem;">📖 Romans 12:1</div>
             <div style="font-size:0.85rem; color:#999; line-height:1.6;">Presenting ourselves as living sacrifices is not a one-time act but a daily surrender...</div>
@@ -407,5 +407,38 @@
     </div>
 
     <script src="app.js"></script>
+<!-- ==================== PAYWALL OVERLAY ==================== -->
+<div id="paywall-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center; padding:1.5rem;">
+    <div style="background:#1a1a2e; border:1.5px solid #6dbfb8; border-radius:20px; padding:2rem; max-width:360px; width:100%; text-align:center;">
+        
+        <div style="font-size:2.5rem; margin-bottom:1rem;">✨</div>
+        
+        <h2 style="color:#6dbfb8; font-size:1.3rem; margin-bottom:0.5rem;">Spirit & Soul Premium</h2>
+        
+        <p id="paywall-message" style="color:#aaa; font-size:0.9rem; margin-bottom:1.5rem;">Unlock all premium content</p>
+        
+        <div style="background:rgba(109,191,184,0.1); border-radius:12px; padding:1rem; margin-bottom:1.5rem; text-align:left;">
+            <p style="color:#e0e0e0; font-size:0.85rem; margin-bottom:0.5rem;">✅ All 11 Prophetic Prayers</p>
+            <p style="color:#e0e0e0; font-size:0.85rem; margin-bottom:0.5rem;">✅ All Prophetic Teachings</p>
+            <p style="color:#e0e0e0; font-size:0.85rem; margin-bottom:0.5rem;">✅ Unlimited Devotionals</p>
+            <p style="color:#e0e0e0; font-size:0.85rem;">✅ New content added regularly</p>
+        </div>
+        
+        <div style="background:#6dbfb8; border-radius:14px; padding:1rem; margin-bottom:0.8rem;">
+            <p style="color:#0d1f1d; font-size:1.1rem; font-weight:700; margin:0;">$2.99 / month</p>
+            <p style="color:#0d1f1d; font-size:0.75rem; margin:0;">Cancel anytime</p>
+        </div>
+        
+        <button onclick="initiatePurchase()" style="width:100%; background:#6dbfb8; color:#0d1f1d; border:none; border-radius:14px; padding:16px; font-size:1rem; font-weight:700; cursor:pointer; margin-bottom:0.8rem;">
+            Subscribe Now
+        </button>
+        
+        <button onclick="closePaywall()" style="width:100%; background:transparent; color:#aaa; border:1px solid #3a3a5a; border-radius:14px; padding:12px; font-size:0.9rem; cursor:pointer; margin-bottom:0.8rem;">
+            Maybe Later
+        </button>
+        
+        <p style="color:#555; font-size:0.75rem;">Payment charged to your Apple ID. Subscription auto-renews unless cancelled 24 hours before renewal period.</p>
+    </div>
+</div>  
 </body>
 </html> 

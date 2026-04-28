@@ -661,3 +661,43 @@ padding: 0.875rem 0.5rem;
 font-size: 1.1rem;
 }
 }
+/* ===== PRAYER TOPICS GRID ===== */
+.prayer-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.prayer-topic-btn {
+    background: rgba(109, 191, 184, 0.08);
+    border: 1.5px solid rgba(109, 191, 184, 0.25);
+    border-radius: 14px;
+    padding: 18px 8px;
+    color: #e0e0e0;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.prayer-topic-btn:hover,
+.prayer-topic-btn:active {
+    background: rgba(109, 191, 184, 0.2);
+    border-color: #6dbfb8;
+    color: #6dbfb8;
+}
+
+/* ===== TEACHING CARDS ===== */
+.teaching-card {
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+}
+
+.teaching-card:hover,
+.teaching-card:active {
+    border-color: #6dbfb8 !important;
+    transform: scale(0.99);
+}

@@ -259,6 +259,7 @@ function navigateTo(page) {
 // DEVOTIONAL FUNCTIONS
 // ==========================================
 function displayDailyDevotional() {
+    if (!trackDevotionalUse()) return;
     const selectedMood = moodSelect.value;
     
     if (!selectedMood || selectedMood === "") {
@@ -667,109 +668,453 @@ window.exportJournal = exportJournal;
 // DONATION SYSTEM
 // ==========================================
 
-let selectedDonationAmount = 10; // Default $10
-let donationType = 'onetime'; // 'onetime' or 'monthly'
+// ==========================================
+// DONATION SYSTEM — FULLY UPDATED
+// Replace everything from "// DONATION SYSTEM" to the end of app.js with this
+// ==========================================
+
+// ── CONFIG ────────────────────────────────
+const PAYPAL_URL   = 'https://paypal.me/spiritsoulministry'; // ✅ your real PayPal
+const ZELLE_EMAIL  = 'dorcusnagadya64@gmail.com';
+const STRIPE_KEY   = 'pk_live_51THxBt1UFpuRFsYHlVJ9jxRB48kS4zqNRtV8Ridpyta6Tx4kNtx6hDbIaPBQfGSxHtHmM89FsxFzxVfkL3CIhok00ta1IoTw3';
+// ─────────────────────────────────────────
+
+let selectedDonationAmount = 10;
+let donationType = 'onetime';
+let stripeInstance = null;
+let stripeElements = null;
+let stripeCard = null;
+
+function getStripe() {
+    if (!stripeInstance) {
+        if (typeof Stripe === 'undefined') {
+            console.warn('Stripe.js not loaded.');
+            return null;
+        }
+        stripeInstance = Stripe(STRIPE_KEY);
+        stripeElements = stripeInstance.elements({ appearance: { theme: 'night' } });
+    }
+    return stripeInstance;
+}
 
 function selectDonation(amount) {
     selectedDonationAmount = amount;
-    
-    // Clear custom input
     const customInput = document.getElementById('custom-amount');
-    if (customInput) {
-        customInput.value = '';
-    }
-    
-    // Update button states
+    if (customInput) customInput.value = '';
     document.querySelectorAll('.donation-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (parseInt(btn.dataset.amount) === amount) {
-            btn.classList.add('active');
-        }
+        if (parseInt(btn.dataset.amount) === amount) btn.classList.add('active');
     });
-    
     updateDonationSummary();
 }
 
 function selectCustomDonation(amount) {
     if (amount && amount > 0) {
         selectedDonationAmount = parseFloat(amount);
-        
-        // Clear preset buttons
-        document.querySelectorAll('.donation-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
+        document.querySelectorAll('.donation-btn').forEach(btn => btn.classList.remove('active'));
         updateDonationSummary();
     }
 }
 
 function selectDonationType(type) {
     donationType = type;
-    
-    // Update button states
     document.querySelectorAll('.donation-type-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.dataset.type === type) {
-            btn.classList.add('active');
-        }
+        if (btn.dataset.type === type) btn.classList.add('active');
     });
-    
     updateDonationSummary();
 }
 
 function updateDonationSummary() {
     const amountEl = document.getElementById('selected-amount');
-    const frequencyEl = document.getElementById('donation-frequency');
-    
-    if (amountEl) {
-        amountEl.textContent = `$${selectedDonationAmount}`;
+    const freqEl   = document.getElementById('donation-frequency');
+    if (amountEl) amountEl.textContent = `$${selectedDonationAmount}`;
+    if (freqEl)   freqEl.textContent   = donationType === 'monthly' ? 'per month' : 'once';
+}
+
+// ── PayPal ───────────────────────────────
+function donateWithPayPal() {
+    const url = `${PAYPAL_URL}/${selectedDonationAmount}`;
+    window.open(url, '_blank');
+    showNotification(`🙏 Thank you! Opening PayPal for your $${selectedDonationAmount} donation...`, 'success', 4000);
+}
+
+// ── Zelle ────────────────────────────────
+function donateWithZelle() {
+    showNotification(
+        `💜 Open your banking app and send $${selectedDonationAmount} to:\n${ZELLE_EMAIL}\nMemo: Spirit & Soul donation`,
+        'info', 6000
+    );
+}
+
+// ── Stripe Card ──────────────────────────
+function donateWithStripe() {
+    showNotification('Opening PayPal for secure payment...', 'info', 3000);
+    setTimeout(() => {
+        window.open(`${PAYPAL_URL}/${selectedDonationAmount}`, '_blank');
+    }, 1000);
+}
+
+// ── Apple Pay / Google Pay ────────────────
+function initExpressCheckout() {
+    const stripe = getStripe();
+    if (!stripe) return;
+    const container = document.getElementById('express-checkout-element');
+    if (!container) return;
+    const ece = stripeElements.create('expressCheckout', {
+        paymentMethods: { applePay: 'always', googlePay: 'always' },
+        buttonHeight: 48
+    });
+    ece.mount('#express-checkout-element');
+    ece.on('ready', function(e) {
+        const methods = e.availablePaymentMethods;
+        const wrapper = document.getElementById('express-checkout-wrapper');
+        if (methods && (methods.applePay || methods.googlePay)) {
+            if (wrapper) wrapper.style.display = 'block';
+        }
+    });
+    ece.on('confirm', function() {
+        showNotification('Redirecting to PayPal...', 'info', 3000);
+        setTimeout(() => {
+            window.open(`${PAYPAL_URL}/${selectedDonationAmount}`, '_blank');
+        }, 1000);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initExpressCheckout();
+});
+
+// Make all functions globally available
+window.selectDonation       = selectDonation;
+window.selectCustomDonation = selectCustomDonation;
+window.selectDonationType   = selectDonationType;
+window.donateWithPayPal     = donateWithPayPal;
+window.donateWithStripe     = donateWithStripe;
+window.donateWithZelle      = donateWithZelle;
+function openMinistryDonate() { window.open('ministry-donate.html', '_blank'); }
+window.openMinistryDonate = openMinistryDonate;
+// ===================================================
+// PROPHETIC PRAYERS
+// ===================================================
+var prayerData = {
+    healing: {
+        title: '🌿 Prayer for Healing',
+        scripture: '"He heals the brokenhearted and binds up their wounds." — Psalm 147:3',
+        text: `Father God, I come before Your throne of grace in the name of Jesus Christ.
+
+You are Jehovah Rapha — the Lord who heals. I declare that by the stripes of Jesus, healing belongs to me. Every cell, every organ, every system in my body is subject to the authority of Your Word.
+
+I break the power of sickness and disease over my body right now. Pain, you have no authority here. Weakness, you must go in Jesus' name.
+
+Father, send Your healing fire through me now. Restore what has been lost. Renew my strength. Let Your supernatural health flow through me from the crown of my head to the soles of my feet.
+
+I receive my healing by faith. I am healed, whole, and restored — spirit, soul, and body.
+
+In Jesus' mighty name, Amen. 🙏`
+    },
+    breakthrough: {
+        title: '⚡ Prayer for Breakthrough',
+        scripture: '"The Lord your God is the one who goes with you to fight for you." — Deuteronomy 20:4',
+        text: `Lord of Hosts, I come to You as my Breakthrough God.
+
+Every wall between me and Your promises — I declare it is coming down today. Every delay, every obstacle, every strategy of the enemy — I dismantle it now by the blood of Jesus.
+
+No door that You open can be shut. I declare breakthroughs in every area of my life: my health, my family, my finances, my calling, and my future.
+
+The season of waiting is ending. The season of receiving is beginning.
+
+I receive my breakthrough now by faith. In Jesus' name, Amen. 🙏`
+    },
+    family: {
+        title: '👨‍👩‍👧 Prayer for Family',
+        scripture: '"As for me and my house, we will serve the Lord." — Joshua 24:15',
+        text: `Heavenly Father, I lift my family before You right now.
+
+I declare my household is covered by the blood of Jesus. No weapon formed against my family shall prosper.
+
+I break every generational curse, every pattern of brokenness, every spirit of division. I declare restoration, healing, and wholeness over every relationship.
+
+Let Your love be the foundation of my home. Let peace rule in every room. Draw every member of my family into a deep encounter with You.
+
+I declare my family is saved, whole, and walking in purpose together.
+
+In Jesus' name, Amen. 🙏`
+    },
+    protection: {
+        title: '🛡️ Prayer for Protection',
+        scripture: '"The Lord will keep you from all harm." — Psalm 121:7',
+        text: `Lord God, You are my Shield and my Refuge.
+
+I declare I am hidden in the shadow of Your wings. No evil shall befall me, no plague shall come near my dwelling. Your angels are encamped around me and everyone I love.
+
+I plead the blood of Jesus over my mind, my body, my home, and my family. I close every door opened to the enemy through fear, sin, or ignorance.
+
+Father, be a wall of fire around me. Assign Your warring angels to go before me, behind me, and beside me today and every day.
+
+I am protected, covered, and safe in You. In Jesus' name, Amen. 🙏`
+    },
+    finances: {
+        title: '🌾 Prayer for Finances',
+        scripture: '"My God will meet all your needs according to the riches of his glory." — Philippians 4:19',
+        text: `Father, You are Jehovah Jireh — my Provider.
+
+I come against the spirit of lack, poverty, and scarcity in Jesus' name. I declare I am redeemed from the curse of poverty. The blessings of Abraham belong to me through faith in Christ.
+
+I declare supernatural provision, unexpected income, and divine favor in every financial transaction. Open the windows of heaven over my life and pour out a blessing I cannot contain.
+
+Let me be a channel of blessing to others. I declare abundance, not lack. Overflow, not shortage.
+
+In Jesus' name, Amen. 🙏`
+    },
+    identity: {
+        title: '✨ Prayer for Identity',
+        scripture: '"Before I formed you in the womb I knew you." — Jeremiah 1:5',
+        text: `Father God, I come to You to be reminded of who I truly am.
+
+I am not defined by my past, my failures, or the words spoken over me by others. I am defined by what You say about me. I am Your child — chosen, loved, accepted, and called.
+
+I renounce every lie the enemy has spoken over my identity. I am not worthless. I am not forgotten. I am fearfully and wonderfully made.
+
+Help me walk boldly in the identity You have given me as Your beloved child.
+
+I receive my true identity in Christ today. In Jesus' name, Amen. 🙏`
+    },
+    nations: {
+        title: '🌍 Prayer for the Nations',
+        scripture: '"Ask me, and I will make the nations your inheritance." — Psalm 2:8',
+        text: `Lord of all the earth, I intercede for the nations.
+
+Every nation belongs to You. I pray for nations in darkness — that the light of the Gospel would break through. I pray for the persecuted church — strengthen them, protect them, let their witness multiply.
+
+I pray for Africa, for Uganda, for every region where Your Spirit is moving. Raise up prophetic voices in every nation. Let revival fires burn. Let justice flow like a river.
+
+Your kingdom come, Your will be done — in every nation on earth.
+
+In Jesus' name, Amen. 🙏`
+    },
+    peace: {
+        title: '🕊️ Prayer for Peace',
+        scripture: '"Peace I leave with you; my peace I give you." — John 14:27',
+        text: `Prince of Peace, I come to You.
+
+My heart has been anxious, my mind troubled, my soul restless. But Your peace surpasses all understanding. I receive that peace right now.
+
+I cast every care, every worry, every fear upon You — because You care for me. The weight of tomorrow is not mine to bear. You hold my future in Your hands.
+
+Let Your peace guard my heart and mind in Christ Jesus. Let Your perfect love cast out every fear.
+
+I am still. I am calm. I am held by You. In Jesus' name, Amen. 🙏`
+    },
+    deliverance: {
+        title: '🔓 Prayer for Deliverance',
+        scripture: '"If the Son sets you free, you will be free indeed." — John 8:36',
+        text: `Lord Jesus, You came to set the captives free.
+
+Every chain, every stronghold, every addiction, every bondage — is broken right now in Jesus' name. The blood of Jesus has purchased my freedom.
+
+I take authority over every unclean spirit that has operated in my life. Leave now in the name of Jesus Christ. You have no legal right here.
+
+Father, fill every empty place with Your Holy Spirit. Let freedom, joy, and righteousness fill the spaces where bondage once lived.
+
+I am free. I walk in freedom today and every day. In Jesus' name, Amen. 🙏`
+    },
+    oil: {
+        title: '🕯️ Sanctifying Anointing Oil',
+        scripture: '"Anoint them with oil in the name of the Lord." — James 5:14',
+        text: `Holy Father, I consecrate this oil for Your sacred use.
+
+This oil has no power in itself — but You are the source of all power. As I sanctify this oil in Jesus' name, I ask that Your presence, healing, and anointing be carried through it.
+
+I set this oil apart solely for the Kingdom of God — for healing, blessing, breakthrough, and Your glory.
+
+Let this oil be a point of contact for faith. When applied in prayer, let Your Spirit move mightily. Let sickness flee, bondages break, and peace come.
+
+This oil is holy, set apart, and filled with Your presence. In Jesus' name, Amen. 🙏`
+    },
+    communion: {
+        title: '🍞 Holy Communion Prayer',
+        scripture: '"Do this in remembrance of me." — Luke 22:19',
+        text: `Lord Jesus, as I prepare to take communion, I pause in reverence before You.
+
+I examine my heart. I confess any sin, any unforgiveness, any area where I have fallen short. I receive Your forgiveness. Your blood has cleansed me completely.
+
+As I take this bread — I remember Your body, broken for me. Every wound You bore purchased my wholeness. As I take this cup — I remember Your blood, shed for me. My sins are forgiven. The covenant is sealed.
+
+I receive strength, healing, and renewal as I partake. The same power that raised Jesus from the dead is alive in me.
+
+Thank You Lord for the gift of communion. I remember You. In Jesus' name, Amen. 🙏`
     }
-    
-    if (frequencyEl) {
-        frequencyEl.textContent = donationType === 'monthly' ? 'per month' : 'once';
+};
+
+// ===================================================
+// TEACHINGS DATA
+// ===================================================
+var teachingsData = [
+    {
+        title: 'The Power of Prophetic Intercession',
+        scripture: '📖 Ezekiel 37:1-10',
+        text: `Standing in the gap for others is one of the highest callings God places on a believer.
+
+[Replace this with your full sermon content]
+
+Scripture References:
+- Ezekiel 37:1-10 — The Valley of Dry Bones
+- Romans 8:26-27 — The Spirit intercedes for us
+- Isaiah 62:6-7 — Watchmen on the walls`
+    },
+    {
+        title: 'Walking in Your Prophetic Identity',
+        scripture: '📖 Jeremiah 1:5',
+        text: `Before you were formed in the womb, God knew you.
+
+[Replace this with your full sermon content]
+
+Scripture References:
+- Jeremiah 1:5 — Before I formed you
+- Ephesians 1:3-6 — Chosen in Him before creation
+- 1 Peter 2:9 — A royal priesthood`
+    },
+    {
+        title: 'Seated in Heavenly Places',
+        scripture: '📖 Ephesians 2:6',
+        text: `When we understand our position in Christ, prayer becomes a declaration from victory, not defeat.
+
+[Replace this with your full sermon content]
+
+Scripture References:
+- Ephesians 2:4-6 — Seated with Christ
+- Colossians 3:1-3 — Set your mind on things above
+- Hebrews 4:16 — Approach the throne of grace`
+    },
+    {
+        title: 'The Altar of Consecration',
+        scripture: '📖 Romans 12:1',
+        text: `Presenting ourselves as living sacrifices is not a one-time act but a daily surrender to God.
+
+[Replace this with your full sermon content]
+
+Scripture References:
+- Romans 12:1-2 — Living sacrifices
+- Luke 9:23 — Take up your cross daily
+- John 12:24 — Unless a grain of wheat falls`
+    }
+];
+
+function showPrayer(topic) {
+    var data = prayerData[topic];
+    if (!data) return;
+    document.getElementById('prayer-topic-title').textContent = data.title;
+    document.getElementById('prayer-scripture').textContent = data.scripture;
+    document.getElementById('prayer-text').textContent = data.text;
+    document.getElementById('prayer-topics').style.display = 'none';
+    document.getElementById('prayer-display').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closePrayer() {
+    document.getElementById('prayer-topics').style.display = 'grid';
+    document.getElementById('prayer-display').style.display = 'none';
+}
+
+function openTeaching(index) {
+    var data = teachingsData[index];
+    if (!data) return;
+    document.getElementById('teaching-full-title').textContent = data.title;
+    document.getElementById('teaching-full-meta').textContent = data.scripture;
+    document.getElementById('teaching-full-text').textContent = data.text;
+    document.getElementById('teachings-list').style.display = 'none';
+    document.getElementById('teaching-full').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeTeaching() {
+    document.getElementById('teachings-list').style.display = 'block';
+    document.getElementById('teaching-full').style.display = 'none';
+}
+
+window.showPrayer = showPrayer;
+window.closePrayer = closePrayer;
+window.openTeaching = openTeaching;
+window.closeTeaching = closeTeaching;
+// ===================================================
+// SUBSCRIPTION & PAYWALL SYSTEM
+// ===================================================
+var isPremium = localStorage.getItem('spiritsoul_premium') === 'true';
+var devotionalCount = parseInt(localStorage.getItem('spiritsoul_devotional_count') || '0');
+var FREE_PRAYERS = ['healing', 'breakthrough'];
+var FREE_TEACHING_COUNT = 2;
+var FREE_DEVOTIONAL_COUNT = 3;
+
+function checkPremium() {
+    isPremium = localStorage.getItem('spiritsoul_premium') === 'true';
+    return isPremium;
+}
+
+function showPaywall(feature) {
+    var messages = {
+        prayers: 'You\'ve used your 2 free prayers!',
+        teachings: 'You\'ve used your 2 free teachings!',
+        devotionals: 'You\'ve used your 3 free devotionals!'
+    };
+    var msg = messages[feature] || 'This is a premium feature!';
+    document.getElementById('paywall-message').textContent = msg;
+    document.getElementById('paywall-overlay').style.display = 'flex';
+}
+
+function closePaywall() {
+    document.getElementById('paywall-overlay').style.display = 'none';
+}
+
+function initiatePurchase() {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.purchase) {
+        window.webkit.messageHandlers.purchase.postMessage({
+            productId: 'com.spiritsoul.app.premium.monthly'
+        });
+    } else {
+        showNotification('Opening subscription... (requires app install)', 'info', 4000);
     }
 }
 
-function donateWithPayPal() {
-    // ⚠️ IMPORTANT: UPDATE THIS WITH YOUR PAYPAL USERNAME!
-    // Go to: https://www.paypal.com/paypalme/
-    // Create your link and replace 'YOURPAYPALUSERNAME' below
-    
-    const paypalUsername = 'YOURPAYPALUSERNAME'; // ⚠️ CHANGE THIS!
-    const amount = selectedDonationAmount;
-    
-    // Check if PayPal username has been updated
-    if (paypalUsername === 'YOURPAYPALUSERNAME') {
-        showNotification('⚠️ Please update PayPal username in app.js first!', 'warning', 5000);
-        console.error('PayPal username not configured. Update the paypalUsername variable in app.js');
+function unlockPremium() {
+    localStorage.setItem('spiritsoul_premium', 'true');
+    isPremium = true;
+    closePaywall();
+    showNotification('✨ Welcome to Spirit & Soul Premium!', 'success', 4000);
+}
+
+function showPrayerWithPaywall(topic) {
+    if (!checkPremium() && !FREE_PRAYERS.includes(topic)) {
+        showPaywall('prayers');
         return;
     }
-    
-    // PayPal.me link format
-    const paypalURL = `https://www.paypal.com/paypalme/${paypalUsername}/${amount}USD`;
-    
-    // Open PayPal in new tab
-    window.open(paypalURL, '_blank');
-    
-    // Show thank you message
-    showNotification(`🙏 Thank you! Redirecting to PayPal for your $${amount} donation...`, 'success', 4000);
-    
-    // Track donation attempt
-    console.log(`Donation attempt: $${amount} ${donationType}`);
+    showPrayer(topic);
 }
 
-function donateWithStripe() {
-    // This requires Stripe setup (coming in Phase 3)
-    // For now, show message
-    showNotification('💳 Stripe payment coming soon! Please use PayPal for now.', 'info', 4000);
-    
-    // TODO: Implement Stripe Checkout in Phase 3
-    console.log('Stripe donation clicked - not yet implemented');
+function openTeachingWithPaywall(index) {
+    if (!checkPremium() && index >= FREE_TEACHING_COUNT) {
+        showPaywall('teachings');
+        return;
+    }
+    openTeaching(index);
 }
 
-// Make donation functions globally available
-window.selectDonation = selectDonation;
-window.selectCustomDonation = selectCustomDonation;
-window.selectDonationType = selectDonationType;
-window.donateWithPayPal = donateWithPayPal;
-window.donateWithStripe = donateWithStripe;
+function trackDevotionalUse() {
+    if (checkPremium()) return true;
+    devotionalCount = parseInt(localStorage.getItem('spiritsoul_devotional_count') || '0');
+    if (devotionalCount >= FREE_DEVOTIONAL_COUNT) {
+        showPaywall('devotionals');
+        return false;
+    }
+    devotionalCount++;
+    localStorage.setItem('spiritsoul_devotional_count', devotionalCount.toString());
+    return true;
+}
+
+window.showPrayerWithPaywall = showPrayerWithPaywall;
+window.openTeachingWithPaywall = openTeachingWithPaywall;
+window.trackDevotionalUse = trackDevotionalUse;
+window.showPaywall = showPaywall;
+window.closePaywall = closePaywall;
+window.initiatePurchase = initiatePurchase;
+window.unlockPremium = unlockPremium;

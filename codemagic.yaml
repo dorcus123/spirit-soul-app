@@ -1,0 +1,32 @@
+workflows:
+  ios-workflow:
+    name: Spirit & Soul iOS
+    max_build_duration: 60
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.spiritsoul.app
+      vars:
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+      xcode: latest
+      node: latest
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Sync Capacitor
+        script: |
+          cp index.html .dist/index.html
+          cp app.js .dist/app.js
+          cp styles.css .dist/styles.css
+          npx cap sync ios
+      - name: Build iOS
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration

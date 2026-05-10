@@ -5,9 +5,6 @@ workflows:
     integrations:
       app_store_connect: Codemagic
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.spiritsoul.app
       xcode: latest
       node: latest
     scripts:
@@ -20,7 +17,7 @@ workflows:
           cp styles.css .dist/styles.css
           npx cap sync ios
           cd ios/App && pod install && cd ../..
-     - name: Build iOS
+      - name: Build iOS
         script: |
           xcode-project build-ipa \
             --workspace "ios/App/App.xcworkspace" \

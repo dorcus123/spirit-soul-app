@@ -8,8 +8,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.spiritsoul.app
-        certificate: distribution
-        provisioning_profile: SpiritSoulAppStore
       xcode: latest
       node: latest
     scripts:

@@ -19,6 +19,7 @@ workflows:
           cp app.js .dist/app.js
           cp styles.css .dist/styles.css
           npx cap sync ios
+          cd ios/App && pod install && cd ../..
       - name: Build iOS
         script: |
           xcode-project build-ipa \

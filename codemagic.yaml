@@ -6,10 +6,12 @@ workflows:
       app_store_connect: Codemagic
     environment:
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.spiritsoul.app
-      xcode: latest
-      node: latest
+      distribution_type: app_store
+      bundle_identifier: com.spiritsoul.app
+      certificate: distribution
+      provisioning_profile: SpiritSoulAppStore
+    xcode: latest
+    node: latest
     scripts:
       - name: Install dependencies
         script: npm install
@@ -21,10 +23,11 @@ workflows:
           npx cap sync ios
           cd ios/App && pod install && cd ../..
       - name: Build iOS
-        script: |
-          xcode-project build-ipa \
-            --workspace "ios/App/App.xcworkspace" \
-            --scheme "App"
+      script: |
+        xcode-project build-ipa \
+          --workspace "ios/App/App.xcworkspace" \
+          --scheme "App"
+          
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:

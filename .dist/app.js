@@ -670,7 +670,6 @@ window.exportJournal = exportJournal;
 
 // ==========================================
 // DONATION SYSTEM — FULLY UPDATED
-// Replace everything from "// DONATION SYSTEM" to the end of app.js with this
 // ==========================================
 
 // ── CONFIG ────────────────────────────────
@@ -1118,3 +1117,11 @@ window.showPaywall = showPaywall;
 window.closePaywall = closePaywall;
 window.initiatePurchase = initiatePurchase;
 window.unlockPremium = unlockPremium;
+function openExternalDonate() {
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+        window.location.href = 'ministry-donate.html';
+    } else {
+        window.open('ministry-donate.html', '_blank');
+    }
+}
+window.openExternalDonate = openExternalDonate;

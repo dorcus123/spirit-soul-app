@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Spirit & Soul Ministry</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #6dbfb8;
+    text-transform: uppercase;
+  }
+
+  header p {
+    font-size: 0.9rem;
+    color: #aaa;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  /* Preset amounts */
+  .amounts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .amount-btn {
+    background: #2a2a3e;
+    border: 1.5px solid #3a3a5a;
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #e0e0e0;
+  }
+
+  .amount-btn:hover { border-color: #6dbfb8; }
+
+  .amount-btn.active {
+    border-color: #6dbfb8;
+    background: #1f3a38;
+  }
+
+  .amount-btn .price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: block;
+    color: #fff;
+  }
+
+  .amount-btn .label {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 3px;
+    display: block;
+  }
+
+  /* Custom amount */
+  .custom-label {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+
+  .custom-input-wrap {
+    display: flex;
+    align-items: center;
+    background: #2a2a3e;
+    border: 1.5px solid #3a3a5a;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.2s;
+  }
+
+  .custom-input-wrap:focus-within { border-color: #6dbfb8; }
+
+  .currency-sign {
+    color: #aaa;
+    font-size: 1rem;
+    margin-right: 8px;
+  }
+
+  .custom-input-wrap input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #e0e0e0;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  /* Frequency toggle */
+  .freq-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .freq-btn {
+    background: #2a2a3e;
+    border: 1.5px solid #3a3a5a;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #e0e0e0;
+    transition: all 0.2s;
+  }
+
+  .freq-btn:hover { border-color: #6dbfb8; }
+
+  .freq-btn.active {
+    border-color: #6dbfb8;
+    background: #1f3a38;
+    color: #fff;
+  }
+
+  /* Summary bar */
+  .summary-bar {
+    background: #2a2a3e;
+    border: 1.5px solid #3a3a5a;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    font-size: 1rem;
+    color: #ccc;
+    margin-bottom: 1.5rem;
+  }
+
+  .summary-bar .amount-highlight {
+    color: #6dbfb8;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  /* Donate buttons */
+  .btn-paypal {
+    display: block;
+    width: 100%;
+    background: #6dbfb8;
+    color: #0d1f1d;
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: opacity 0.2s;
+  }
+
+  .btn-paypal:hover { opacity: 0.9; }
+
+  .btn-stripe {
+    display: block;
+    width: 100%;
+    background: #5b5ef4;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: opacity 0.2s;
+  }
+
+  .btn-stripe:hover { opacity: 0.9; }
+
+  .trust-badges {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #777;
+    line-height: 1.9;
+    margin-bottom: 2rem;
+  }
+
+  /* Why support */
+  .section {
+    background: #222236;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #6dbfb8;
+    margin-bottom: 1rem;
+  }
+
+  .section ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .section ul li {
+    font-size: 0.875rem;
+    color: #ccc;
+    padding: 6px 0 6px 18px;
+    position: relative;
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .section ul li:last-child { border-bottom: none; }
+
+  .section ul li::before {
+    content: "•";
+    color: #6dbfb8;
+    position: absolute;
+    left: 0;
+  }
+
+  /* Other ways */
+  .other-ways p {
+    font-size: 0.875rem;
+    color: #ccc;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .other-ways p:last-child { border-bottom: none; }
+
+  .other-ways span.handle {
+    color: #6dbfb8;
+    font-weight: 600;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 0.75rem;
+    color: #555;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Spirit&amp;Soul</h1>
+  <p>Where Mind Meets Soul</p>
+</header>
+<div style="padding: 0.75rem 1rem 0;">
+    <button onclick="window.location.href='capacitor://localhost'" style="background:transparent; border:1px solid #6dbfb8; color:#6dbfb8; border-radius:10px; padding:8px 16px; cursor:pointer; font-size:0.9rem;">
+        ← spirit&Soul
+    </button>
+</div>
+
+<div class="container">
+
+  <!-- Preset Amounts -->
+  <div class="amounts-grid">
+    <div class="amount-btn" onclick="selectAmount(3, this)">
+      <span class="price">$3</span>
+      <span class="label">coffee</span>
+    </div>
+    <div class="amount-btn" onclick="selectAmount(5, this)">
+      <span class="price">$5</span>
+      <span class="label">app maintenance</span>
+    </div>
+    <div class="amount-btn active" onclick="selectAmount(10, this)">
+      <span class="price">$10</span>
+      <span class="label">Generous</span>
+    </div>
+    <div class="amount-btn" onclick="selectAmount(25, this)">
+      <span class="price">$25</span>
+      <span class="label">Blessing</span>
+    </div>
+  </div>
+
+  <!-- Custom Amount -->
+  <p class="custom-label">Or Enter Custom Amount</p>
+  <div class="custom-input-wrap">
+    <span class="currency-sign">$</span>
+    <input type="number" id="custom-amount" placeholder="0.00" min="1" step="0.01"
+      oninput="onCustomAmount(this.value)" />
+  </div>
+
+  <!-- Frequency -->
+  <div class="freq-toggle">
+    <div class="freq-btn active" onclick="selectFreq('once', this)">One-Time Gift</div>
+    <div class="freq-btn" onclick="selectFreq('monthly', this)">Monthly Support</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-bar" id="summary">
+    You're giving <span class="amount-highlight" id="summary-amount">$10</span>
+    <span id="summary-freq"> once</span>
+  </div>
+
+  <!-- PayPal -->
+  <a id="paypal-btn" class="btn-paypal"
+    href="https://paypal.me/spiritsoulministry/10"
+    target="_blank" rel="noopener">
+    💳 Donate with PayPal
+  </a>
+
+  <!-- Stripe placeholder -->
+  <a class="btn-stripe"
+    href="#"
+    target="_blank" rel="noopener">
+    💳 Card Payments Coming Soon
+  </a>
+
+  <!-- Trust -->
+  <div class="trust-badges">
+    🔒 Secure payment processing<br>
+    💝 100% of your donation supports this ministry<br>
+    🧾 Tax-deductible receipt via email
+  </div>
+
+  <!-- Why Support -->
+  <div class="section">
+    <h2>Why Support Us?</h2>
+    <ul>
+      <li>Help keep Spirit &amp; Soul accessible as a free, prayer centered space for spiritual and emotional healing</li>
+      <li>Support widows, women, and children in Africa with basic needs such as food, education, clothing, and shelter</li>
+      <li>Strengthen prayer and intercession initiatives that cover individuals, families, and communities</li>
+      <li>Enable outreach rooted in obedience, stewardship, and love as Jesus Christ did</li>
+      <li>Sustain the development and care of this platform, including hosting, security, and growth tools</li>
+      <li>Cover server and development costs</li>
+      <li>Help extend hope to those who feel unseen, unheard, or forgotten</li>
+    </ul>
+  </div>
+
+  <!-- Other Ways -->
+  <div class="section other-ways">
+    <h2>Other Ways to Give</h2>
+    <p><span>Venmo:</span> <span class="handle">@SpiritAndSoul</span></p>
+    <p><span>Cash App:</span> <span class="handle">$SpiritAndSoul</span></p>
+    <p><span>Zelle:</span> <span class="handle">spiritsoulministry@gmail.com</span></p>
+  </div>
+
+</div>
+
+<footer>
+  &copy; 2025 Spirit &amp; Soul Ministry. All rights reserved.
+</footer>
+
+<script>
+  var selectedAmount = 10;
+  var selectedFreq = 'once';
+
+  function selectAmount(amt, el) {
+    selectedAmount = amt;
+    document.getElementById('custom-amount').value = '';
+    document.querySelectorAll('.amount-btn').forEach(function(b) { b.classList.remove('active'); });
+    el.classList.add('active');
+    updateSummary();
+  }
+
+  function onCustomAmount(val) {
+    document.querySelectorAll('.amount-btn').forEach(function(b) { b.classList.remove('active'); });
+    selectedAmount = parseFloat(val) || 0;
+    updateSummary();
+  }
+
+  function selectFreq(freq, el) {
+    selectedFreq = freq;
+    document.querySelectorAll('.freq-btn').forEach(function(b) { b.classList.remove('active'); });
+    el.classList.add('active');
+    updateSummary();
+  }
+
+  function updateSummary() {
+    var display = selectedAmount > 0 ? '$' + selectedAmount.toFixed(0) : '$0';
+    document.getElementById('summary-amount').textContent = display;
+    document.getElementById('summary-freq').textContent = selectedFreq === 'monthly' ? ' every month' : ' once';
+
+    var paypalUrl = selectedFreq === 'monthly'
+      ? 'https://www.paypal.com/donate/?business=spiritsoulministry%40gmail.com&currency_code=USD&amount=' + selectedAmount
+      : 'https://paypal.me/spiritsoulministry/' + selectedAmount;
+    document.getElementById('paypal-btn').href = paypalUrl;
+  }
+</script>
+</body>
+</html>

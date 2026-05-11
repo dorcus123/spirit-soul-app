@@ -80,7 +80,6 @@ function saveToLocalStorage() {
     try {
         localStorage.setItem('spiritSoulJournal', JSON.stringify(journalEntries));
         localStorage.setItem('spiritSoulMood', currentMood);
-        showSyncStatus('Saved');
         return true;
     } catch (e) {
         console.error('Error saving to localStorage:', e);
@@ -606,14 +605,13 @@ window.addEventListener('appinstalled', () => {
 });
 
 // Check if running in standalone mode (already installed)
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-    console.log('📱 App is running in standalone mode (installed)');
-    // Hide install banner if app is already installed
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || (window.Capacitor && window.Capacitor.isNativePlatform())) {
     if (installBanner) {
         installBanner.style.display = 'none';
     }
     localStorage.setItem('appInstalled', 'true');
 }
+    
 
 // Also check localStorage for install status
 if (localStorage.getItem('appInstalled') === 'true') {
